@@ -3,13 +3,12 @@ layout: post
 title: "সেই ছেলেটি: মেঘালয়"
 date: 2026-07-31 16:50:00 +0800
 categories: ["Novel"]
-series: "Novel"
-chapter_name: "New Twist New Characters"
-badge: "Hot"
-author: "ABDULLAH BIN FAHAD"
-pinned: true
-keywords: "self improvement, critical thinking, discipline, productivity, success, growth mindset, abdullah bin fahad, life lessons, decision making, purpose, leadership"
-references: ["This is an original ongoing novel written by Abdullah Bin Fahad. All characters, events, and places are part of a fictional narrative unless otherwise stated. New chapters will be published as the story progresses.", "Author: Abdullah Bin Fahad", "Genre: Mystery"]
+series: "সেই ছেলেটি: মেঘালয়"
+chapter_name: "\"New Twist New Characters\""
+badge: "\"Hot\""
+author: "\"ABDULLAH BIN FAHAD\""
+keywords: "\"self improvement, critical thinking, discipline, productivity, success, growth mindset, abdullah bin fahad, life lessons, decision making, purpose, leadership\""
+references: ["This is an original ongoing novel written by Abdullah Bin Fahad. All characters", "events", "and places are part of a fictional narrative unless otherwise stated. New chapters will be published as the story progresses.", "Author: Abdullah Bin Fahad", "Genre: Mystery"]
 ---
 রূপসীর জন্মদিনের আয়োজনটা আমার কাছে সবসময় একটু অদ্ভুত লাগে। এত মানুষের ভিড়, হাসি, অভিনন্দন, ক্যামেরার আলো, দামি পোশাক আর সাজসজ্জার মাঝেও কোথাও যেন একটা অদৃশ্য শূন্যতা লুকিয়ে থাকে। হয়তো এটা শুধু আমার চোখের সমস্যা। আমি সবকিছুর মধ্যেই অস্বাভাবিক কিছু খুঁজে বের করার চেষ্টা করি।
 
