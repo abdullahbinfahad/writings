@@ -1,6 +1,43 @@
 ---
 layout: default
 ---
+<style>
+    /* FIX: Makes the Related Posts cards wider and more horizontal */
+    .related-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1.8rem;
+        width: 100%;
+    }
+    
+    /* FIX: Removes the dot and indent from the References section */
+    .post-references ul {
+        list-style: none !important;
+        padding-left: 0 !important;
+        margin: 0;
+    }
+    
+    /* Ensures the 16:9 wrapper works flawlessly for both images and videos */
+    .featured-image-wrapper {
+        position: relative;
+        width: 100% !important;
+        aspect-ratio: 16 / 9 !important;
+        border-radius: 16px;
+        overflow: hidden;
+        border: 1px solid var(--border-light, #e5e7eb);
+        margin: 0 0 1.5rem 0;
+        background: #f3f4f6;
+        display: block !important;
+    }
+    .featured-image-wrapper img,
+    .featured-image-wrapper video {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
+        display: block;
+    }
+</style>
+
 <div class="post-layout">
     <article class="post-article fade-in">
         <h1 class="premium-headline">{{ page.title }}</h1>
@@ -11,22 +48,34 @@ layout: default
         </div>
         {% endif %}
 
+        <!-- UPDATED: Properly locks Images AND Videos into 16:9 -->
         {% if page.image or page.attachment %}
         <div class="featured-image-wrapper">
-            {% if page.image %}<img src="{{ page.image | relative_url }}" alt="{{ page.title }}">{% elsif page.attachment %}
-                {% assign ext = page.attachment | split: '.' | last %}
-                {% if ext == 'png' or ext == 'jpg' or ext == 'jpeg' or ext == 'gif' or ext == 'webp' %}
-                    <img src="{{ page.attachment | relative_url }}" alt="{{ page.title }}">
+            {% if page.image %}
+                <img src="{{ page.image | relative_url }}" alt="{{ page.title }}" loading="lazy">
+            {% elsif page.attachment %}
+                {% assign ext = page.attachment | split: '.' | last | downcase %}
+                {% if ext == 'png' or ext == 'jpg' or ext == 'jpeg' or ext == 'gif' or ext == 'webp' or ext == 'svg' %}
+                    <img src="{{ page.attachment | relative_url }}" alt="{{ page.title }}" loading="lazy">
+                {% elsif ext == 'mp4' or ext == 'webm' or ext == 'ogv' %}
+                    <video src="{{ page.attachment | relative_url }}" controls loading="lazy"></video>
                 {% endif %}
             {% endif %}
         </div>
         {% endif %}
 
-        {% if page.attachment %}{% assign ext = page.attachment | split: '.' | last %}{% if ext == 'pdf' %}<div class="attachment-viewer"><iframe src="{{ page.attachment }}" title="PDF Reader"></iframe></div>{% endif %}{% endif %}
+        <!-- Keep PDFs as a viewer below -->
+        {% if page.attachment %}
+            {% assign ext = page.attachment | split: '.' | last | downcase %}
+            {% if ext == 'pdf' %}
+            <div class="attachment-viewer">
+                <iframe src="{{ page.attachment }}" title="PDF Reader"></iframe>
+            </div>
+            {% endif %}
+        {% endif %}
 
         {% if page.location %}<div class="post-location"><i class="fas fa-map-marker-alt"></i> {{ page.location }}</div>{% endif %}
         
-        <!-- UPDATED: Meta text size reduced to 0.85rem -->
         <div class="post-meta" style="font-size: 0.85rem; color: #6b7280; font-family: var(--font-sans); border-bottom: 1px solid #e5e7eb; padding-bottom: 1.2rem; margin-bottom: 2.5rem;">
             <span class="post-date"><i class="far fa-calendar-alt"></i> {{ page.date | date: "%B %d, %Y" }}</span>
             {% if page.author %}<span class="post-author"><i class="fas fa-user"></i> {{ page.author }}</span>{% endif %}
@@ -42,7 +91,7 @@ layout: default
         </div>
         {% endif %}
 
-        <!-- 1. PERFECTLY FIXED SERIES NAVIGATION (State-machine logic) -->
+        <!-- 1. PERFECTLY FIXED SERIES NAVIGATION -->
         {% if page.series %}
         <div class="series-navigation">
             <h3><i class="fas fa-layer-group"></i> {{ page.series }} Series</h3>
@@ -87,7 +136,7 @@ layout: default
         </div>
         {% endif %}
 
-        <!-- 2. UPDATED: RELATED POSTS (Now includes Part numbers) -->
+        <!-- 2. UPDATED: RELATED POSTS (Wider Horizontal Cards) -->
         <div class="related-posts-section">
             <h3><i class="fas fa-bolt"></i> You might also like...</h3>
             <div class="related-grid">
