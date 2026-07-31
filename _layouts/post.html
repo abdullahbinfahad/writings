@@ -152,10 +152,22 @@ layout: default
     </div>
 </div>
 
+<!-- INVISIBLE VIEW COUNTER (Shows data in editor.html but NOT publicly) -->
 <script>
     const urlPath = window.location.pathname.replace(/^\/|\/$/g, '');
-    if(urlPath) { fetch(`https://api.countapi.xyz/hit/abdullahbinfahad_writings/${urlPath}`).catch(e => console.log('Counter unavailable')); }
+    if(urlPath) {
+        fetch(`https://api.countapi.xyz/hit/abdullahbinfahad_writings/${urlPath}`)
+            .then(response => {
+                if(response.ok) {
+                    console.log(`✅ View tracked successfully for: ${urlPath}`);
+                } else {
+                    console.warn(`⚠️ CountAPI returned ${response.status} for ${urlPath}`);
+                }
+            })
+            .catch(e => console.warn('🔴 CountAPI unavailable (Likely blocked by GFW). Views will not be counted.'));
+    }
 </script>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const openBtn = document.getElementById('openUploadForm'); const modal = document.getElementById('uploadModal'); const closeBtn = document.getElementById('closeModal');
