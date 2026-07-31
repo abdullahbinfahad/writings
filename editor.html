@@ -177,6 +177,28 @@
                     </div>
                     <button id="uploadBtn" style="background: #10b981; color: white; border: none; padding: 12px 20px; border-radius: 10px; font-weight: 600; cursor: pointer; width: 100%; margin-top: 15px; transition:0.2s;">⬆ Upload & Insert</button>
                     <div id="uploadStatus" class="upload-status"></div>
+
+                    <!-- NEW SECTION: Select Previous Media -->
+                    <div class="media-row" style="margin-top: 25px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
+                        <div>
+                            <label for="previousMediaSelect">📁 Select Previous Media</label>
+                            <div style="display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap;">
+                                <select id="previousMediaSelect" style="flex: 1; min-width: 200px; padding: 12px; border: 1px solid #d1d5db; border-radius: 10px; font-size: 1rem; background: #fff; min-height: 48px;">
+                                    <option value="">Click "Refresh List" to load...</option>
+                                </select>
+                                <button id="refreshPrevMediaBtn" style="background: #64748b; color: white; border: none; padding: 12px 20px; border-radius: 10px; font-weight: 600; cursor: pointer; height: 48px; white-space: nowrap;">🔄 Refresh List</button>
+                            </div>
+                            <div id="prevMediaPreview" style="margin-top:10px; display:none; text-align:center; border:1px solid #e2e8f0; border-radius:12px; padding:10px; background:#fafafa;"></div>
+                            
+                            <div style="display: flex; gap: 15px; align-items: center; margin-top: 10px;">
+                                <button id="insertPrevMediaBtn" style="background: #a82e1d; color: white; border: none; padding: 12px 20px; border-radius: 10px; font-weight: 600; cursor: pointer; flex: 1;">⬇ Insert Selected Media</button>
+                                <div style="display:flex; align-items:center; gap:5px; font-size:0.9rem;">
+                                    <input type="checkbox" id="setPrevFeatured" style="width:18px; height:18px; min-height:auto; padding:0; margin:0; cursor:pointer;">
+                                    <label for="setPrevFeatured" style="margin:0; cursor:pointer; font-weight:500;">Set as Featured URL</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <label for="markdown-editor" style="margin-top:25px;">Content (Rich Text & HTML allowed)</label>
                 <div style="font-size:0.8rem; color:#64748b; text-align:right; margin-top:4px; margin-bottom:4px;" id="wordCount">0 words</div>
@@ -240,6 +262,13 @@
         const statusEl = document.getElementById('status');
         const postList = document.getElementById('post-list');
         const refreshListBtn = document.getElementById('refreshList');
+        
+        // NEW ELEMENTS FOR PREVIOUS MEDIA
+        const prevMediaSelect = document.getElementById('previousMediaSelect');
+        const refreshPrevMediaBtn = document.getElementById('refreshPrevMediaBtn');
+        const prevMediaPreview = document.getElementById('prevMediaPreview');
+        const insertPrevMediaBtn = document.getElementById('insertPrevMediaBtn');
+        const setPrevFeaturedCheck = document.getElementById('setPrevFeatured');
 
         let currentPostSha = null; 
         let currentFilename = null;
@@ -348,6 +377,90 @@
             return token;
         }
 
+        // --- LOAD PREVIOUS MEDIA LIST ---
+        async function loadPreviousMedia() {
+            const token = saveToken();
+            if(!token) { return; }
+            prevMediaSelect.innerHTML = '<option value="">Loading...</option>';
+            prevMediaPreview.style.display = 'none';
+            try {
+                const res = await fetch('https://api.github.com/repos/abdullahbinfahad/writings/contents/assets/uploads', {
+                    headers: { 'Authorization': `token ${token}` }
+                });
+                if(!res.ok) throw new Error('Failed to fetch');
+                const files = await res.json();
+                prevMediaSelect.innerHTML = '<option value="">Select a file...</option>';
+                if(files.length === 0) {
+                    prevMediaSelect.innerHTML = '<option value="">No files found.</option>';
+                    return;
+                }
+                files.sort((a,b) => a.name.localeCompare(b.name));
+                files.forEach(file => {
+                    const opt = document.createElement('option');
+                    opt.value = file.download_url;
+                    opt.textContent = file.name;
+                    prevMediaSelect.appendChild(opt);
+                });
+            } catch(e) {
+                prevMediaSelect.innerHTML = '<option value="">Error loading or folder missing.</option>';
+            }
+        }
+        refreshPrevMediaBtn.addEventListener('click', loadPreviousMedia);
+
+        // --- PREVIEW PREVIOUS MEDIA ON SELECT ---
+        prevMediaSelect.addEventListener('change', function() {
+            const url = this.value;
+            prevMediaPreview.style.display = 'none';
+            prevMediaPreview.innerHTML = '';
+            if(!url) return;
+            const filename = this.options[this.selectedIndex].text;
+            const ext = filename.split('.').pop().toLowerCase();
+            const isImage = ['png','jpg','jpeg','gif','webp','svg'].includes(ext);
+            const isVideo = ['mp4','webm','ogv'].includes(ext);
+            const isPdf = ext === 'pdf';
+
+            let html = '';
+            if(isImage) html = `<img src="${url}" style="max-width:100%; max-height:250px; border-radius:8px;">`;
+            else if(isVideo) html = `<video src="${url}" controls style="max-width:100%; max-height:250px; border-radius:8px;"></video>`;
+            else if(isPdf) html = `<iframe src="${url}" style="width:100%; height:250px; border:1px solid #e2e8f0; border-radius:8px;"></iframe>`;
+            else html = `<div style="padding:20px; background:#f1f5f9; border-radius:8px;"><i class="fas fa-file"></i> ${filename}</div>`;
+
+            prevMediaPreview.innerHTML = html;
+            prevMediaPreview.style.display = 'block';
+        });
+
+        // --- INSERT PREVIOUS MEDIA ---
+        insertPrevMediaBtn.addEventListener('click', function() {
+            const url = prevMediaSelect.value;
+            if(!url) { alert('Please select a file first.'); return; }
+            const filename = prevMediaSelect.options[prevMediaSelect.selectedIndex].text;
+            const ext = filename.split('.').pop().toLowerCase();
+            const isImage = ['png','jpg','jpeg','gif','webp','svg'].includes(ext);
+            const isVideo = ['mp4','webm','ogv'].includes(ext);
+            const isPdf = ext === 'pdf';
+            const altText = filename.split('.')[0];
+            let insertText = '';
+            
+            if(isImage) insertText = `<figure class="media-figure"><div class="media-wrapper"><img src="${url}" alt="${altText}" title="${altText}"></div></figure>`;
+            else if(isVideo) insertText = `<figure class="media-figure"><div class="media-wrapper"><video src="${url}" controls title="${altText}"></video></div></figure>`;
+            else if(isPdf) insertText = `<iframe src="${url}" width="100%" height="500px" style="border:none; border-radius:12px;"></iframe>`;
+            else insertText = `[Download ${filename}](${url})`;
+
+            if(setPrevFeaturedCheck.checked && isImage) {
+                seoImageInput.value = url;
+                featuredImagePreview.src = url;
+                featuredImagePreview.style.display = 'block';
+                alert('✅ Set as Featured Image URL successfully!');
+            } else {
+                const cursorPos = easyMDE.codemirror.getCursor();
+                easyMDE.codemirror.replaceRange(insertText + '\n', cursorPos);
+                alert('✅ Inserted into content!');
+            }
+            setPrevFeaturedCheck.checked = false;
+        });
+
+
+        // --- UPLOAD MEDIA ---
         uploadBtn.addEventListener('click', async () => {
             const token = saveToken();
             if(!token) { uploadStatus.innerText = 'Error: Token required.'; uploadStatus.className = 'error'; return; }
@@ -418,6 +531,8 @@
                         }
                         fileInput.value = ''; uploadFileName.value = ''; mediaAlt.value = ''; mediaCaption.value = '';
                         setAsFeaturedCheck.checked = false;
+                        // Refresh previous media list automatically after upload
+                        loadPreviousMedia();
                     } else { const err = await res.json(); uploadStatus.innerText = `❌ GitHub Error: ${err.message}`; uploadStatus.className = 'error'; }
                 } catch(error) { uploadStatus.innerText = `❌ Connection Error: ${error.message}`; uploadStatus.className = 'error'; }
             };
@@ -661,6 +776,8 @@
         });
 
         setTimeout(loadPostList, 500);
+        // Load previous media list on initial load if token exists
+        if(savedToken) { setTimeout(loadPreviousMedia, 1000); }
     </script>
 </body>
 </html>
