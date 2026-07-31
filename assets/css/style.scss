@@ -17,6 +17,7 @@ $border-light: #e5e7eb;
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
+// CRITICAL BASE FIXES: Prevents horizontal scroll
 html, body { 
     width: 100% !important; 
     max-width: 100% !important; 
@@ -48,6 +49,15 @@ body {
 .header-container { display: flex; justify-content: center; }
 .header-inner { width: 100% !important; max-width: 1400px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
 
+// Logo Styling
+.site-logo {
+    height: 40px;
+    width: auto;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid $accent-red;
+    background: #fff;
+}
 .site-text {
     font-size: 1.8rem;
     font-weight: 700;
@@ -56,10 +66,10 @@ body {
     -webkit-text-fill-color: transparent;
 }
 .site-title a { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+
 .site-nav { display: flex; gap: 1.5rem; align-items: center; }
 .site-nav a { text-decoration: none; color: $text-muted; font-weight: 600; font-size: 0.9rem; transition: color 0.2s; }
 .site-nav a:hover { color: $accent-red; }
-
 
 // --- FOOTER ---
 .blog-footer { background: #ffffff; padding: 1.5rem 0; margin-top: auto; border-top: 1px solid $border-light; width: 100% !important; }
@@ -97,17 +107,23 @@ body {
 .cat-btn { background: transparent; border: 1px solid transparent; padding: 0.3rem 1.2rem; border-radius: 9999px; font-family: var(--font-sans); font-size: 0.85rem; font-weight: 500; cursor: pointer; transition: 0.3s; color: $text-muted; flex-shrink: 0; scroll-snap-align: start; white-space: nowrap; }
 .cat-btn:hover, .cat-btn.active { color: $accent-red; background: #fef2f2; border-color: #fecaca; }
 
-// --- BADGE LABELS ---
+// --- BADGE LABELS (NEW, HOT, IMPORTANT, FAVORITE, CUSTOM) ---
 .post-card.pinned { border-left: 5px solid $accent-red; }
+
 .badge-wrapper { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 0.5rem; }
 .badge-label { display: inline-block; font-size: 0.65rem; font-weight: 700; padding: 0.25rem 0.9rem; border-radius: 20px; letter-spacing: 0.5px; text-transform: uppercase; color: #ffffff; }
-.badge-featured { background: $accent-red; }
-.badge-new { background: #3b82f6; }
-.badge-important { background: #f59e0b; }
-.badge-hot { background: #ef4444; }
-.badge-favorite { background: #ec4899; }
-.badge-custom, .badge-label:not(.badge-featured):not(.badge-new):not(.badge-important):not(.badge-hot):not(.badge-favorite) {
-    background: #8b5cf6;
+
+/* Pre-defined badge colors */
+.badge-featured { background: $accent-red; } /* Dark Red for Pinned/Featured */
+.badge-new       { background: #3b82f6; }      /* Blue for New */
+.badge-important { background: #f59e0b; }      /* Orange for Important */
+.badge-hot       { background: #ef4444; }      /* Bright Red for Hot */
+.badge-favorite  { background: #ec4899; }      /* Pink for Favorite */
+
+/* Fallback for any custom text (e.g., badge: Exclusive) */
+.badge-custom, 
+.badge-label:not(.badge-featured):not(.badge-new):not(.badge-important):not(.badge-hot):not(.badge-favorite) {
+    background: #8b5cf6; /* Purple for anything else */
 }
 
 // --- POST CARDS ---
@@ -126,31 +142,9 @@ body {
 .see-more-btn { display: inline-block; background: $accent-red; color: #ffffff; padding: 12px 32px; border-radius: 30px; text-decoration: none; font-weight: 600; font-size: 1rem; transition: all 0.3s ease; border: 1px solid transparent; }
 .see-more-btn:hover { background: #8b1f12; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(168, 46, 29, 0.2); }
 
-// --- NUCLEAR 16:9 IMAGE/VIDEO LOCK ---
-.featured-image-wrapper { 
-    position: relative; 
-    width: 100% !important; 
-    aspect-ratio: 16 / 9 !important; 
-    border-radius: 16px; 
-    overflow: hidden !important; 
-    border: 1px solid $border-light; 
-    margin: 0; 
-    background: #f3f4f6; 
-    display: block !important;
-    box-sizing: border-box;
-}
-/* NUCLEAR FALLBACK: max-width/height forces physical shrinking */
-.featured-image-wrapper img,
-.featured-image-wrapper video { 
-    width: 100% !important; 
-    height: 100% !important; 
-    max-width: 100% !important; 
-    max-height: 100% !important; 
-    object-fit: cover !important; 
-    display: block;
-    vertical-align: top;
-    box-sizing: border-box;
-}
+// --- POST PAGE (16:9 IMAGE LOCK & SERIES NAV) ---
+.featured-image-wrapper { position: relative; width: 100% !important; aspect-ratio: 16 / 9 !important; border-radius: 16px; overflow: hidden; border: 1px solid $border-light; margin: 0 0 1.5rem 0; background: #f3f4f6; }
+.featured-image-wrapper img { width: 100% !important; height: 100% !important; object-fit: cover !important; display: block; }
 .post-meta { color: $text-muted; font-size: 0.85rem; border-bottom: 1px solid $border-light; padding-bottom: 1.2rem; margin-bottom: 2.5rem; font-family: var(--font-sans); }
 
 .premium-body-wrapper { max-width: 760px; margin: 0 auto; width: 100% !important; }
@@ -171,14 +165,14 @@ body {
 // --- RELATED POSTS ---
 .related-posts-section { border-top: 3px solid $accent-red; padding-top: 2.5rem; margin-top: 3rem; width: 100%; }
 .related-posts-section h3 { font-family: var(--font-sans); font-size: 1.4rem; font-weight: 700; color: $accent-red; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 8px; }
-.related-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.8rem; }
+.related-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.8rem; }
 .related-card { display: flex; flex-direction: column; padding: 1.5rem; background: $card-bg; border: 1px solid $border-light; border-radius: 16px; text-decoration: none; color: $text-main; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: 0 2px 8px rgba(0,0,0,0.02); border-left: 4px solid transparent; }
 .related-card:hover { transform: translateY(-6px) scale(1.02); border-color: $accent-red; box-shadow: 0 12px 30px rgba(168, 46, 29, 0.1); }
 .related-card h4 { font-size: 1.1rem; line-height: 1.4; font-weight: 600; margin-bottom: 0.6rem; transition: color 0.2s; }
 .related-card:hover h4 { color: $accent-red; }
 .related-card .related-date { font-size: 0.85rem; color: $text-muted; font-family: var(--font-sans); }
 
-// --- ARCHIVE PAGE ---
+// --- ARCHIVE PAGE (INDIVIDUAL CARDS) ---
 .archive-layout { display: grid; grid-template-columns: 1fr; gap: 3rem; padding-bottom: 4rem; }
 .archive-timeline { background: $card-bg; padding: 2rem; border-radius: 16px; border: 1px solid $border-light; }
 .archive-section-title { font-family: var(--font-sans); font-size: 1.5rem; border-left: 4px solid $accent-red; padding-left: 0.8rem; margin-bottom: 1.5rem; }
@@ -205,7 +199,7 @@ body {
 .folder-contents a { text-decoration: none; color: $text-main; font-size: 0.9rem; transition: 0.2s; }
 .folder-contents a:hover { color: $accent-red; }
 
-// --- RESPONSIVE ---
+// --- RESPONSIVE PERFECTION ---
 @media (min-width: 901px) {
     .post-layout { grid-template-columns: 1fr 320px; gap: 4rem; }
     .archive-controls { flex-direction: row; flex-wrap: wrap; align-items: center; gap: 1.5rem; }
@@ -213,8 +207,8 @@ body {
     .category-filters { flex: 0 0 370px; max-width: 370px; }
     .post-card { padding: 32px 36px; }
     .archive-layout { grid-template-columns: 1fr 1fr; gap: 3rem; }
-    .premium-body-wrapper { max-width: 95%; margin-left: 0; margin-right: auto; }
-    .archive-categories { display: flex; flex-wrap: wrap; gap: 2rem; }
+    .premium-body-wrapper { max-width: 95%; margin-left: 0; margin-right: auto; } /* Fixes desktop left gap */
+    .archive-categories { display: flex; flex-wrap: wrap; gap: 2rem; } /* Individual cards */
 }
 @media (max-width: 900px) {
     .container { padding: 0 16px; }
