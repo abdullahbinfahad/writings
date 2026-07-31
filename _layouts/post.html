@@ -38,7 +38,7 @@ layout: default
         border-radius: 16px;
         overflow: hidden;
         border: 1px solid #e5e7eb;
-        margin: 0 0 1.5rem 0;
+        margin: 0;
         background: #f3f4f6;
         display: block !important;
         box-sizing: border-box;
@@ -52,6 +52,18 @@ layout: default
         vertical-align: top; /* eliminates tiny gaps */
         box-sizing: border-box;
     }
+
+    /* CAPTION STYLING (Different font - Italic Sans-Serif) */
+    .media-figure figcaption {
+        font-family: var(--font-sans);
+        font-size: 0.9rem;
+        color: #6b7280;
+        text-align: center;
+        padding-top: 0.8rem;
+        line-height: 1.4;
+        font-style: italic;
+        max-width: 100%;
+    }
 </style>
 
 <div class="post-layout">
@@ -64,20 +76,26 @@ layout: default
         </div>
         {% endif %}
 
-        <!-- 16:9 FEATURED CONTAINER – handles images & videos -->
+        <!-- 16:9 FEATURED CONTAINER WITH CAPTION -->
         {% if page.image or page.attachment %}
-        <div class="featured-image-wrapper">
-            {% if page.image %}
-                <img src="{{ page.image | relative_url }}" alt="{{ page.title }}" loading="lazy">
-            {% elsif page.attachment %}
-                {% assign ext = page.attachment | split: '.' | last | downcase %}
-                {% if ext == 'png' or ext == 'jpg' or ext == 'jpeg' or ext == 'gif' or ext == 'webp' or ext == 'svg' %}
-                    <img src="{{ page.attachment | relative_url }}" alt="{{ page.title }}" loading="lazy">
-                {% elsif ext == 'mp4' or ext == 'webm' or ext == 'ogv' %}
-                    <video src="{{ page.attachment | relative_url }}" controls loading="lazy"></video>
+        <figure class="media-figure" style="margin: 0 0 1.5rem 0; width: 100%; max-width: 760px; margin-left: auto; margin-right: auto;">
+            <div class="featured-image-wrapper">
+                {% if page.image %}
+                    <img src="{{ page.image | relative_url }}" alt="{{ page.title }}" loading="lazy">
+                {% elsif page.attachment %}
+                    {% assign ext = page.attachment | split: '.' | last | downcase %}
+                    {% if ext == 'png' or ext == 'jpg' or ext == 'jpeg' or ext == 'gif' or ext == 'webp' or ext == 'svg' %}
+                        <img src="{{ page.attachment | relative_url }}" alt="{{ page.title }}" loading="lazy">
+                    {% elsif ext == 'mp4' or ext == 'webm' or ext == 'ogv' %}
+                        <video src="{{ page.attachment | relative_url }}" controls loading="lazy"></video>
+                    {% endif %}
                 {% endif %}
+            </div>
+            <!-- Caption placed directly underneath the media -->
+            {% if page.caption or page.image_caption %}
+            <figcaption>{{ page.caption | default: page.image_caption }}</figcaption>
             {% endif %}
-        </div>
+        </figure>
         {% endif %}
 
         <!-- PDF fallback -->
