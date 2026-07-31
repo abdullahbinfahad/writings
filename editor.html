@@ -195,7 +195,7 @@
         const catInput = document.getElementById('categories');
         const seriesNameInput = document.getElementById('series_name');
         const chapterNameInput = document.getElementById('chapter_name');
-        const badgeInput = document.getElementById('badge_name'); // NEW BADGE INPUT
+        const badgeInput = document.getElementById('badge_name');
         const authorInput = document.getElementById('author_name');
         const pinnedInput = document.getElementById('pinned_post');
         const seoDescInput = document.getElementById('meta_description');
@@ -342,20 +342,27 @@
                         
                         const isFeatured = setAsFeaturedCheck.checked;
 
+                        // --- CRITICAL FIX: When "Set as Featured" is checked, DO NOT insert text into editor ---
                         if(mime.startsWith('image/')) {
                             insertText = `<figure class="media-figure"><div class="media-wrapper"><img src="${publicUrl}" alt="${altText}" title="${altText}"></div>${captionHTML}</figure>`;
                             if(isFeatured) {
+                                // Only fill the URL box, no insertion into the editor
                                 seoImageInput.value = publicUrl;
-                                const topPos = {line: 0, ch: 0};
-                                easyMDE.codemirror.replaceRange(insertText + '\n\n', topPos);
+                                uploadStatus.innerHTML = `✅ Set as Featured Image! <a href="${publicUrl}" target="_blank">View File</a> (Will appear under the title)`;
                             } else {
                                 const cursorPos = easyMDE.codemirror.getCursor();
                                 easyMDE.codemirror.replaceRange(insertText + '\n', cursorPos);
                             }
                         } else if(mime.startsWith('video/')) {
                             insertText = `<figure class="media-figure"><div class="media-wrapper"><video src="${publicUrl}" controls title="${altText}"></video></div>${captionHTML}</figure>`;
-                            const cursorPos = easyMDE.codemirror.getCursor();
-                            easyMDE.codemirror.replaceRange(insertText + '\n', cursorPos);
+                            if(isFeatured) {
+                                // Only fill the URL box, no insertion into the editor
+                                seoImageInput.value = publicUrl;
+                                uploadStatus.innerHTML = `✅ Set as Featured Video! <a href="${publicUrl}" target="_blank">View File</a> (Will appear under the title)`;
+                            } else {
+                                const cursorPos = easyMDE.codemirror.getCursor();
+                                easyMDE.codemirror.replaceRange(insertText + '\n', cursorPos);
+                            }
                         } else {
                             insertText = `[Download ${fullFilename}](${publicUrl})`;
                             const cursorPos = easyMDE.codemirror.getCursor();
@@ -448,7 +455,7 @@
                 catInput.value = cats.startsWith('[') ? cats.replace(/[\[\]"]/g, '') : cats;
                 seriesNameInput.value = getMeta('series').trim();
                 chapterNameInput.value = getMeta('chapter_name').trim();
-                badgeInput.value = getMeta('badge').trim(); // LOAD BADGE
+                badgeInput.value = getMeta('badge').trim();
                 authorInput.value = getMeta('author').trim();
                 pinnedInput.checked = getMeta('pinned').trim() === 'true';
                 additionalFileInput.value = getMeta('additional_file').trim();
@@ -475,7 +482,7 @@
             const categories = catInput.value.trim().split(',').map(c => c.trim()).filter(c => c);
             const seriesName = seriesNameInput.value.trim();
             const chapterName = chapterNameInput.value.trim();
-            const badge = badgeInput.value.trim(); // SAVE BADGE
+            const badge = badgeInput.value.trim();
             const author = authorInput.value.trim();
             const pinned = pinnedInput.checked;
             const content = easyMDE.value();
@@ -526,7 +533,7 @@
             let fileContent = `---\nlayout: post\ntitle: "${title.replace(/"/g, '\\"')}"\ndate: ${jekyllDate}\ncategories: [${categories.map(c => `"${c}"`).join(', ')}]\n`;
             if(seriesName) fileContent += `series: "${seriesName.replace(/"/g, '\\"')}"\n`;
             if(chapterName) fileContent += `chapter_name: "${chapterName.replace(/"/g, '\\"')}"\n`;
-            if(badge) fileContent += `badge: "${badge.replace(/"/g, '\\"')}"\n`; // WRITE BADGE
+            if(badge) fileContent += `badge: "${badge.replace(/"/g, '\\"')}"\n`;
             if(author) fileContent += `author: "${author.replace(/"/g, '\\"')}"\n`;
             if(pinned) fileContent += `pinned: true\n`;
             if(description) fileContent += `description: "${description.replace(/"/g, '\\"')}"\n`;
@@ -559,7 +566,7 @@
                     statusEl.className = 'success';
                     // Full Reset
                     titleInput.value = ''; easyMDE.value(''); catInput.value = ''; seriesNameInput.value = '';
-                    chapterNameInput.value = ''; badgeInput.value = ''; // CLEAR BADGE
+                    chapterNameInput.value = ''; badgeInput.value = '';
                     authorInput.value = 'ABDULLAH BIN FAHAD'; pinnedInput.checked = false;
                     seoDescInput.value = ''; descCount.textContent = '0'; tags = []; updateTagUI();
                     seoImageInput.value = ''; additionalFileInput.value = ''; referencesInput.value = '';
