@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pro Blog Editor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+    <style>
+        body { background: #f4f6f9; font-family: 'Inter', sans-serif; display: flex; justify-content: center; padding: 20px; box-sizing: border-box; }
+        .editor-page-wrapper { display: flex; gap: 2rem; max-width: 1200px; width: 100%; flex-wrap: wrap; }
+        .editor-main-area { flex: 1; min-width: 0; }
+        .editor-container { background: white; padding: 30px; border-radius: 20px; max-width: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.06); border: 1px solid #eee; }
+        h1 { margin-top: 0; font-size: 1.5rem; color: #1e293b; }
+        label { display: block; font-weight: 600; margin-top: 18px; margin-bottom: 6px; font-size: 0.9rem; color: #475569; }
+        input[type="text"], input[type="datetime-local"], input[type="url"], input[type="date"], input[type="file"] { width: 100%; padding: 14px; border: 1px solid #d1d5db; border-radius: 10px; font-size: 1rem; box-sizing: border-box; font-family: inherit; transition: 0.2s; min-height: 48px; background: #fff; }
+        input:focus, textarea:focus { outline: 2px solid #a82e1d; border-color: transparent; }
+        .row { display: flex; gap: 20px; flex-wrap: wrap; }
+        .row > div { flex: 1; min-width: 160px; }
+        .token-box { background: #f1f5f9; padding: 15px; border-radius: 10px; margin-bottom: 20px; border: 1px solid #e2e8f0; }
+        .btn-group { display: flex; gap: 15px; margin-top: 25px; flex-wrap: wrap; }
+        .btn { border: none; padding: 15px 25px; font-size: 1rem; border-radius: 12px; cursor: pointer; font-weight: 600; transition: 0.2s; flex: 1; min-width: 140px; min-height: 50px; }
+        .btn-publish { background: #a82e1d; color: white; }
+        .btn-publish:hover { background: #8b1f12; }
+        .btn-delete { background: #dc2626; color: white; display: none; }
+        .btn-delete:hover { background: #b91c1c; }
+        #status { margin-top: 20px; font-weight: 600; text-align: center; }
+        .success { color: #16a34a; }
+        .error { color: #dc2626; }
+        .editor-sidebar-area { width: 320px; flex-shrink: 0; }
+        .archive-list-section { background: #fff; border-radius: 20px; padding: 20px; border: 1px solid #e2e8f0; box-shadow: 0 4px 12px rgba(0,0,0,0.04); position: sticky; top: 20px; max-height: 85vh; overflow-y: auto; }
+        .archive-list-section h3 { margin: 0 0 12px 0; font-size: 1rem; color: #1e293b; display: flex; justify-content: space-between; align-items: center; }
+        .refresh-btn { background: #a82e1d; color: white; border: none; border-radius: 8px; padding: 6px 14px; font-size: 0.8rem; cursor: pointer; }
+        #post-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 6px; max-height: 500px; overflow-y: auto; }
+        #post-list li { background: #f8fafc; padding: 10px 14px; border-radius: 8px; border: 1px solid #e2e8f0; font-size: 0.9rem; cursor: pointer; transition: 0.2s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        #post-list li:hover { background: #a82e1d; color: white; border-color: #a82e1d; }
+        #post-list .views-count { font-size: 0.75rem; color: #94a3b8; float: right; margin-left: 8px; }
+        .load-manual-box { margin-top: 15px; background: #fef2f2; padding: 15px; border-radius: 12px; border: 1px solid #fecaca; }
+        .load-manual-box label { margin: 0 0 5px 0; font-weight: 600; color: #991b1b; }
+        .load-manual-box input { width: 100%; padding: 12px; border: 1px solid #fecaca; border-radius: 8px; background: white; box-sizing: border-box; margin-bottom: 8px; font-size: 0.9rem; }
+        .btn-load { background: #64748b; color: white; width: 100%; border: none; padding: 10px; border-radius: 8px; font-size: 0.9rem; cursor: pointer; font-weight: 600; }
+        .btn-load:hover { background: #475569; }
+        .seo-card, .media-card { margin-top: 25px; padding: 20px 24px 24px; border-radius: 16px; border: 1px solid #e2e8f0; background: #ffffff; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
+        .seo-card h3, .media-card h3 { font-size: 1rem; color: #1e293b; margin: 0 0 16px 0; padding-bottom: 10px; border-bottom: 3px solid #a82e1d; display: flex; align-items: center; gap: 8px; }
+        .seo-card .char-count { font-size: 0.8rem; color: #64748b; margin-top: -6px; text-align: right; }
+        .tag-container { display: flex; flex-wrap: wrap; gap: 8px; padding: 8px 0 12px; min-height: 44px; border-bottom: 1px dashed #e2e8f0; margin-bottom: 10px; }
+        .tag-chip { display: inline-flex; align-items: center; gap: 6px; background: #f1f5f9; color: #1e293b; padding: 5px 12px; border-radius: 9999px; font-size: 0.85rem; font-weight: 500; border: 1px solid #e2e8f0; cursor: grab; transition: 0.2s; user-select: none; }
+        .tag-chip:hover { border-color: #a82e1d; background: #fef2f2; }
+        .tag-chip .remove-tag { color: #94a3b8; cursor: pointer; font-weight: bold; margin-left: 4px; transition: 0.2s; font-size: 1.1rem; line-height: 1; }
+        .tag-chip .remove-tag:hover { color: #dc2626; }
+        .tag-helper { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+        .tag-helper .tag-count { font-size: 0.85rem; color: #64748b; font-weight: 500; }
+        .tag-suggestions { display: flex; flex-wrap: wrap; gap: 6px; }
+        .tag-suggestions .suggested-tag { background: transparent; border: 1px dashed #cbd5e1; padding: 3px 12px; border-radius: 9999px; font-size: 0.8rem; color: #64748b; cursor: pointer; transition: 0.2s; }
+        .tag-suggestions .suggested-tag:hover { background: #a82e1d; color: #fff; border-color: #a82e1d; }
+        .example-btn { background: #f1f5f9; border: none; padding: 6px 14px; border-radius: 9999px; font-size: 0.8rem; cursor: pointer; color: #475569; font-weight: 500; }
+        .example-btn:hover { background: #a82e1d; color: #fff; }
+        .media-row { display: flex; gap: 15px; flex-wrap: wrap; margin-top: 10px; }
+        .media-row > div { flex: 1; min-width: 150px; }
+        .upload-status { margin-top: 12px; font-size: 0.9rem; font-weight: 500; }
+        
+        .featured-checkbox-wrap { margin-top: 15px; display: flex; align-items: center; gap: 8px; }
+        .featured-checkbox-wrap input[type="checkbox"] { width: 20px; height: 20px; min-height: auto; padding: 0; margin: 0; cursor: pointer; accent-color: #a82e1d; }
+
+        @media (max-width: 900px) {
+            .editor-page-wrapper { flex-direction: column; }
+            .editor-sidebar-area { width: 100%; margin-top: 1rem; }
+            .editor-container { padding: 20px; }
+            .archive-list-section { position: static; max-height: none; }
+            #post-list { max-height: 250px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="editor-page-wrapper">
+        <div class="editor-main-area">
+            <div class="editor-container">
+                <h1>📝 Pro Blog Editor</h1>
+                <p style="color:#64748b; margin-bottom: 20px;">Write seamlessly across all devices.</p>
+                <div class="token-box">
+                    <label for="token">GitHub Personal Access Token</label>
+                    <input type="password" id="token" placeholder="Paste your github_pat_... token here">
+                </div>
+                <div class="row">
+                    <div><label for="title">Post Title</label><input type="text" id="title" placeholder="Enter the title..."></div>
+                    <div><label for="slug">URL Slug (Auto-generated)</label><input type="text" id="slug" placeholder="auto-generated-from-title"></div>
+                </div>
+                <div class="row">
+                    <div><label for="datetime">Date & Time</label><input type="datetime-local" id="datetime"></div>
+                    <div><label for="categories">Categories (Add multiple separated by commas)</label><input type="text" id="categories" placeholder="Tech, Life, Thoughts"></div>
+                </div>
+                
+                <!-- SERIES, CHAPTER, BADGE & PINNED SETTINGS -->
+                <div class="row">
+                    <div><label for="series_name">Series / Novel Name</label><input type="text" id="series_name" placeholder="e.g. My Time Travel Novel"></div>
+                    <div><label for="chapter_name">Part / Chapter Name</label><input type="text" id="chapter_name" placeholder="e.g. Part 1: The Beginning"></div>
+                </div>
+                <div class="row">
+                    <div><label for="badge_name">Badge Label (e.g., New, Hot, Important, Exclusive)</label><input type="text" id="badge_name" placeholder="New, Hot, Important..."></div>
+                    <div style="display:flex; align-items:center; gap:10px; margin-top:25px;">
+                        <label for="pinned_post" style="margin:0; cursor:pointer;">📌 Pin this Post?</label>
+                        <input type="checkbox" id="pinned_post" style="width:20px; height:20px; min-height:auto; padding:0; cursor:pointer;">
+                    </div>
+                </div>
+
+                <div class="seo-card">
+                    <h3>🔍 SEO & Metadata</h3>
+                    <div style="margin-bottom: 15px;">
+                        <label for="meta_description">Meta Description <span style="font-weight:400; color:#64748b;">(160 chars)</span></label>
+                        <input type="text" id="meta_description" placeholder="Short description for search engines..." maxlength="160">
+                        <div class="char-count"><span id="descCount">0</span> / 160</div>
+                    </div>
+                    <div class="row" style="margin-bottom:15px;">
+                        <div><label for="author_name">Author</label><input type="text" id="author_name" value="ABDULLAH BIN FAHAD"></div>
+                    </div>
+                    <div>
+                        <label>Keywords / Tags <span style="font-weight:400; color:#64748b;">(Drag to reorder)</span></label>
+                        <div id="tagContainer" class="tag-container"></div>
+                        <input type="text" id="tagInput" placeholder="Type a tag and press Enter..." style="min-height:44px; margin-top:4px; padding: 10px 14px;">
+                        <div class="tag-helper">
+                            <div class="tag-count" id="tagCount">0 tags</div>
+                            <div class="tag-suggestions" id="suggestionContainer">
+                                <span style="font-size:0.85rem; color:#64748b; margin-right:4px;">Quick add:</span>
+                                <button class="suggested-tag" data-tag="Life">Life</button>
+                                <button class="suggested-tag" data-tag="Philosophy">Philosophy</button>
+                                <button class="suggested-tag" data-tag="Technology">Technology</button>
+                                <button class="suggested-tag" data-tag="Culture">Culture</button>
+                            </div>
+                            <button class="example-btn" id="addExampleTags">✨ Add Examples</button>
+                        </div>
+                    </div>
+                    <div style="margin-top: 18px;">
+                        <label for="featured_image">Featured Image URL (Placed under the title)</label>
+                        <input type="url" id="featured_image" placeholder="https://example.com/image.jpg">
+                    </div>
+                </div>
+                <div class="seo-card" style="margin-top:15px;">
+                    <h3>📎 Additional File URL</h3>
+                    <label for="additional_file">Image, Video, or PDF URL</label>
+                    <input type="url" id="additional_file" placeholder="https://example.com/under-article-file.pdf">
+                </div>
+                <div class="seo-card" style="margin-top:15px;">
+                    <h3>📚 References & Links</h3>
+                    <label for="references_input">References (One per line)</label>
+                    <textarea id="references_input" rows="4" placeholder="https://example.com/ref1&#10;https://example.com/ref2&#10;Book Title, Page 12" style="width:100%; padding:12px; border:1px solid #d1d5db; border-radius:10px; font-family:inherit; resize:vertical;"></textarea>
+                </div>
+                <div class="media-card">
+                    <h3>📤 Upload Media & SEO</h3>
+                    <div class="media-row">
+                        <div><label for="fileInput">Choose File</label><input type="file" id="fileInput" accept="image/*,video/*,.pdf,.docx,.xlsx,.svg,.webp,.txt,.zip"></div>
+                        <div><label for="uploadFileName">Custom Filename</label><input type="text" id="uploadFileName" placeholder="my-cool-image"></div>
+                    </div>
+                    <div class="media-row">
+                        <div><label for="mediaAlt">Alt Text (Image SEO)</label><input type="text" id="mediaAlt" placeholder="Describe the image visually"></div>
+                        <div><label for="mediaCaption">Caption (Visible below media)</label><input type="text" id="mediaCaption" placeholder="A short description..."></div>
+                    </div>
+                    <div class="featured-checkbox-wrap">
+                        <input type="checkbox" id="setAsFeatured">
+                        <label for="setAsFeatured" style="margin:0; cursor:pointer; font-weight:500;">Set as Featured Image (Placed under the title)</label>
+                    </div>
+                    <button id="uploadBtn" style="background: #10b981; color: white; border: none; padding: 12px 20px; border-radius: 10px; font-weight: 600; cursor: pointer; width: 100%; margin-top: 15px; transition:0.2s;">⬆ Upload & Insert</button>
+                    <div id="uploadStatus" class="upload-status"></div>
+                </div>
+                <label for="markdown-editor" style="margin-top:25px;">Content (Rich Text & HTML allowed)</label>
+                <div style="font-size:0.8rem; color:#64748b; text-align:right; margin-top:4px; margin-bottom:4px;" id="wordCount">0 words</div>
+                <textarea id="markdown-editor" placeholder="Write your post here. Use toolbar for styling, or paste HTML!"></textarea>
+                <div class="btn-group">
+                    <button class="btn btn-publish" id="saveBtn">Publish New Post</button>
+                    <button class="btn btn-delete" id="deleteBtn">🗑️ Delete Post</button>
+                </div>
+                <div id="status"></div>
+            </div>
+        </div>
+        <div class="editor-sidebar-area">
+            <div class="archive-list-section">
+                <h3>📚 Load Previous Post <button class="refresh-btn" id="refreshList">Refresh List</button></h3>
+                <ul id="post-list"><li style="background:transparent; border:none; color:#64748b; text-align:center; cursor:default; white-space:normal;">Loading previous posts...</li></ul>
+                <div class="load-manual-box">
+                    <label>Or load by exact slug:</label>
+                    <input type="text" id="loadSlug" placeholder="2026-07-29-my-title">
+                    <button class="btn-load" id="loadBtn">Load for Edit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
+    <script>
+        const easyMDE = new EasyMDE({ element: document.getElementById('markdown-editor'), spellChecker: false, toolbar: ["bold", "italic", "heading", "|", "quote", "unordered-list", "ordered-list", "|", "link", "image", "table", "|", "preview", "side-by-side", "fullscreen", "|", "guide"], previewClass: "editor-preview" });
+
+        const tokenInput = document.getElementById('token');
+        const titleInput = document.getElementById('title');
+        const slugInput = document.getElementById('slug');
+        const dateInput = document.getElementById('datetime');
+        const catInput = document.getElementById('categories');
+        const seriesNameInput = document.getElementById('series_name');
+        const chapterNameInput = document.getElementById('chapter_name');
+        const badgeInput = document.getElementById('badge_name'); // NEW BADGE INPUT
+        const authorInput = document.getElementById('author_name');
+        const pinnedInput = document.getElementById('pinned_post');
+        const seoDescInput = document.getElementById('meta_description');
+        const descCount = document.getElementById('descCount');
+        const tagInput = document.getElementById('tagInput');
+        const tagContainer = document.getElementById('tagContainer');
+        const tagCountEl = document.getElementById('tagCount');
+        const suggestionContainer = document.getElementById('suggestionContainer');
+        const addExampleBtn = document.getElementById('addExampleTags');
+        const seoImageInput = document.getElementById('featured_image');
+        const additionalFileInput = document.getElementById('additional_file');
+        const referencesInput = document.getElementById('references_input');
+        const fileInput = document.getElementById('fileInput');
+        const uploadFileName = document.getElementById('uploadFileName');
+        const mediaAlt = document.getElementById('mediaAlt');
+        const mediaCaption = document.getElementById('mediaCaption');
+        const uploadBtn = document.getElementById('uploadBtn');
+        const uploadStatus = document.getElementById('uploadStatus');
+        const setAsFeaturedCheck = document.getElementById('setAsFeatured');
+        const wordCountEl = document.getElementById('wordCount');
+        const loadSlugInput = document.getElementById('loadSlug');
+        const loadBtn = document.getElementById('loadBtn');
+        const saveBtn = document.getElementById('saveBtn');
+        const deleteBtn = document.getElementById('deleteBtn');
+        const statusEl = document.getElementById('status');
+        const postList = document.getElementById('post-list');
+        const refreshListBtn = document.getElementById('refreshList');
+
+        let currentPostSha = null; 
+        let currentFilename = null;
+        let tags = [];
+
+        Sortable.create(tagContainer, { animation: 150, ghostClass: 'tag-chip' });
+
+        const now = new Date(); now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+        dateInput.value = now.toISOString().slice(0,16);
+        const savedToken = localStorage.getItem('github_blog_token');
+        if(savedToken) tokenInput.value = savedToken;
+
+        function generateSlug(text) {
+            return text.toLowerCase()
+                .replace(/[^a-z0-9\s-]/g, '')
+                .trim()
+                .replace(/\s+/g, '-')
+                .replace(/-+/g, '-');
+        }
+        let isAutoSlugging = true;
+        titleInput.addEventListener('input', () => {
+            if(isAutoSlugging) {
+                slugInput.value = generateSlug(titleInput.value);
+            }
+        });
+        slugInput.addEventListener('input', () => {
+            isAutoSlugging = false;
+        });
+
+        seoDescInput.addEventListener('input', () => { descCount.textContent = seoDescInput.value.length; });
+
+        function updateWordCount() {
+            const text = easyMDE.value().trim();
+            let count = 0;
+            if(text) {
+                const matches = text.match(/[\u0980-\u09FFa-zA-Z]+/gu);
+                if(matches) count = matches.length;
+            }
+            wordCountEl.textContent = `${count} words`;
+        }
+        easyMDE.codemirror.on('change', updateWordCount);
+
+        function updateTagUI() {
+            tagContainer.innerHTML = '';
+            tags.forEach((tag, index) => {
+                const chip = document.createElement('div');
+                chip.className = 'tag-chip';
+                chip.innerHTML = `${tag} <span class="remove-tag" data-index="${index}">×</span>`;
+                chip.querySelector('.remove-tag').addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    removeTag(parseInt(this.dataset.index));
+                });
+                tagContainer.appendChild(chip);
+            });
+            tagCountEl.textContent = `${tags.length} tags`;
+            tagInput.focus();
+        }
+        function addTag(newTag) {
+            newTag = newTag.trim().toLowerCase();
+            if(!newTag) return;
+            if(tags.includes(newTag)) { tagInput.value = ''; return; }
+            tags.push(newTag);
+            updateTagUI();
+            tagInput.value = '';
+        }
+        function removeTag(index) {
+            tags.splice(index, 1);
+            updateTagUI();
+        }
+        tagInput.addEventListener('keydown', (e) => {
+            if(e.key === 'Enter' && tagInput.value.trim()) { e.preventDefault(); addTag(tagInput.value); }
+        });
+        suggestionContainer.addEventListener('click', (e) => {
+            if(e.target.classList.contains('suggested-tag')) { addTag(e.target.dataset.tag); }
+        });
+        const exampleTags = ['Self Improvement', 'Critical Thinking', 'Discipline', 'Productivity', 'Success', 'Growth Mindset', 'ABDULLAH BIN FAHAD', 'Life Lessons', 'Decision Making', 'Purpose', 'Leadership'];
+        addExampleBtn.addEventListener('click', () => {
+            exampleTags.forEach(t => addTag(t));
+            updateTagUI();
+        });
+
+        function saveToken() {
+            const token = tokenInput.value.trim();
+            if(token) localStorage.setItem('github_blog_token', token);
+            return token;
+        }
+
+        uploadBtn.addEventListener('click', async () => {
+            const token = saveToken();
+            if(!token) { uploadStatus.innerText = 'Error: Token required.'; uploadStatus.className = 'error'; return; }
+            const file = fileInput.files[0];
+            if(!file) { uploadStatus.innerText = 'Error: Please select a file.'; uploadStatus.className = 'error'; return; }
+            uploadStatus.innerText = 'Uploading to GitHub...';
+            uploadStatus.className = '';
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                const content = e.target.result.split(',')[1];
+                let name = uploadFileName.value.trim();
+                if(!name) name = file.name.split('.')[0];
+                const ext = file.name.split('.').pop();
+                const fullFilename = `${name}.${ext}`;
+                const path = `assets/uploads/${fullFilename}`;
+                const url = `https://api.github.com/repos/abdullahbinfahad/writings/contents/${path}`;
+                try {
+                    let sha = null;
+                    try { const getRes = await fetch(url, { headers: { 'Authorization': `token ${token}` } }); if(getRes.status === 200) { const data = await getRes.json(); sha = data.sha; } } catch(e) {}
+                    const res = await fetch(url, { method: 'PUT', headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ message: `Upload file: ${fullFilename}`, content: content, sha: sha }) });
+                    if(res.ok) {
+                        const publicUrl = `/assets/uploads/${fullFilename}`;
+                        uploadStatus.innerHTML = `✅ Uploaded! <a href="${publicUrl}" target="_blank">View File</a>`;
+                        uploadStatus.className = 'success';
+                        const mime = file.type;
+                        const altText = mediaAlt.value.trim() || name;
+                        const captionText = mediaCaption.value.trim();
+                        let insertText = '';
+                        let captionHTML = captionText ? `<figcaption>${captionText}</figcaption>` : '';
+                        
+                        const isFeatured = setAsFeaturedCheck.checked;
+
+                        if(mime.startsWith('image/')) {
+                            insertText = `<figure class="media-figure"><div class="media-wrapper"><img src="${publicUrl}" alt="${altText}" title="${altText}"></div>${captionHTML}</figure>`;
+                            if(isFeatured) {
+                                seoImageInput.value = publicUrl;
+                                const topPos = {line: 0, ch: 0};
+                                easyMDE.codemirror.replaceRange(insertText + '\n\n', topPos);
+                            } else {
+                                const cursorPos = easyMDE.codemirror.getCursor();
+                                easyMDE.codemirror.replaceRange(insertText + '\n', cursorPos);
+                            }
+                        } else if(mime.startsWith('video/')) {
+                            insertText = `<figure class="media-figure"><div class="media-wrapper"><video src="${publicUrl}" controls title="${altText}"></video></div>${captionHTML}</figure>`;
+                            const cursorPos = easyMDE.codemirror.getCursor();
+                            easyMDE.codemirror.replaceRange(insertText + '\n', cursorPos);
+                        } else {
+                            insertText = `[Download ${fullFilename}](${publicUrl})`;
+                            const cursorPos = easyMDE.codemirror.getCursor();
+                            easyMDE.codemirror.replaceRange(insertText + '\n', cursorPos);
+                        }
+                        fileInput.value = ''; uploadFileName.value = ''; mediaAlt.value = ''; mediaCaption.value = '';
+                        setAsFeaturedCheck.checked = false;
+                    } else { const err = await res.json(); uploadStatus.innerText = `❌ GitHub Error: ${err.message}`; uploadStatus.className = 'error'; }
+                } catch(error) { uploadStatus.innerText = `❌ Connection Error: ${error.message}`; uploadStatus.className = 'error'; }
+            };
+            reader.readAsDataURL(file);
+        });
+
+        async function loadPostList() {
+            const token = saveToken();
+            if(!token) { statusEl.innerText = 'Please paste your Token first.'; return; }
+            postList.innerHTML = '<li style="background:transparent; border:none; color:#64748b; text-align:center; cursor:default;">Loading...</li>';
+            try {
+                const res = await fetch('https://api.github.com/repos/abdullahbinfahad/writings/contents/_posts', { headers: { 'Authorization': `token ${token}` } });
+                if(!res.ok) throw new Error('Failed to fetch list');
+                const files = await res.json();
+                postList.innerHTML = '';
+                if(files.length === 0) { postList.innerHTML = '<li style="background:transparent; border:none; color:#64748b; text-align:center; cursor:default;">No posts found yet.</li>'; return; }
+                files.sort((a,b) => b.name.localeCompare(a.name));
+                for (const file of files) {
+                    if(file.name.endsWith('.md')) {
+                        const li = document.createElement('li');
+                        const slug = file.name.replace('.md', '');
+                        li.innerText = slug;
+                        li.onclick = () => { loadSlugInput.value = file.name; loadBtn.click(); };
+                        
+                        const countSpan = document.createElement('span');
+                        countSpan.className = 'views-count';
+                        countSpan.innerText = '(views: -)';
+                        li.appendChild(countSpan);
+                        postList.appendChild(li);
+
+                        try {
+                            const countRes = await fetch(`https://api.countapi.xyz/get/abdullahbinfahad_writings/${slug}`);
+                            if(countRes.ok) {
+                                const countData = await countRes.json();
+                                if(countData.value !== undefined) countSpan.innerText = `(views: ${countData.value})`;
+                            }
+                        } catch(e) {
+                            countSpan.innerText = '(views: -)';
+                        }
+                    }
+                }
+                statusEl.innerText = 'Post list refreshed! Click one to edit.';
+                statusEl.className = 'success';
+            } catch(err) {
+                postList.innerHTML = `<li style="background:transparent; border:none; color:#dc2626; text-align:center; cursor:default;">Error: ${err.message}</li>`;
+            }
+        }
+        refreshListBtn.addEventListener('click', loadPostList);
+
+        loadBtn.addEventListener('click', async () => {
+            const token = saveToken();
+            const slug = loadSlugInput.value.trim();
+            if(!token || !slug) { alert('Please provide Token and Post slug.'); return; }
+            const url = `https://api.github.com/repos/abdullahbinfahad/writings/contents/_posts/${slug}`;
+            statusEl.innerText = 'Loading post...';
+            try {
+                const res = await fetch(url, { headers: { 'Authorization': `token ${token}` } });
+                if(res.status === 404) { statusEl.innerText = '❌ Post not found.'; statusEl.className = 'error'; return; }
+                const data = await res.json();
+                currentPostSha = data.sha; currentFilename = slug;
+
+                const binaryString = atob(data.content.replace(/\n/g, ''));
+                const bytes = new Uint8Array(binaryString.length);
+                for (let i = 0; i < binaryString.length; i++) { bytes[i] = binaryString.charCodeAt(i); }
+                const content = new TextDecoder('utf-8').decode(bytes);
+
+                const parts = content.split('---');
+                if(parts.length < 3) { statusEl.innerText = '❌ Invalid file format.'; return; }
+                const meta = parts[1]; const body = parts.slice(2).join('---').trim();
+                const getMeta = (key) => { const match = meta.match(new RegExp(`^${key}:\\s*(.*)`, 'm')); return match ? match[1] : ''; };
+
+                titleInput.value = getMeta('title').replace(/^"|"$/g, '');
+                const rawDate = getMeta('date').trim();
+                if(rawDate) dateInput.value = rawDate.replace(' ', 'T').slice(0, 16);
+                
+                const loadedSlug = slug.replace('.md', '').replace(/^\d{4}-\d{2}-\d{2}-/, '');
+                if(loadedSlug) {
+                    slugInput.value = loadedSlug;
+                    isAutoSlugging = false;
+                }
+
+                const cats = getMeta('categories').trim();
+                catInput.value = cats.startsWith('[') ? cats.replace(/[\[\]"]/g, '') : cats;
+                seriesNameInput.value = getMeta('series').trim();
+                chapterNameInput.value = getMeta('chapter_name').trim();
+                badgeInput.value = getMeta('badge').trim(); // LOAD BADGE
+                authorInput.value = getMeta('author').trim();
+                pinnedInput.checked = getMeta('pinned').trim() === 'true';
+                additionalFileInput.value = getMeta('additional_file').trim();
+                referencesInput.value = getMeta('references').replace(/[\[\]"]/g, '').replace(/,/g, '\n').trim();
+                
+                seoDescInput.value = getMeta('description').trim(); descCount.textContent = seoDescInput.value.length;
+                const loadedTags = getMeta('keywords').trim();
+                if(loadedTags) { tags = loadedTags.split(',').map(t => t.trim().toLowerCase()); updateTagUI(); } else { tags = []; updateTagUI(); }
+                seoImageInput.value = getMeta('image').trim();
+                easyMDE.value(body);
+                updateWordCount();
+
+                saveBtn.innerText = 'Update Post'; saveBtn.style.background = '#f59e0b'; 
+                deleteBtn.style.display = 'block';
+                statusEl.innerHTML = `✅ Loaded: <strong>${slug}</strong>`; statusEl.className = 'success';
+            } catch(err) { statusEl.innerText = `❌ Error: ${err.message}`; statusEl.className = 'error'; }
+        });
+
+        saveBtn.addEventListener('click', async () => {
+            const token = saveToken();
+            const title = titleInput.value.trim();
+            const slug = slugInput.value.trim() || generateSlug(title);
+            const date = dateInput.value;
+            const categories = catInput.value.trim().split(',').map(c => c.trim()).filter(c => c);
+            const seriesName = seriesNameInput.value.trim();
+            const chapterName = chapterNameInput.value.trim();
+            const badge = badgeInput.value.trim(); // SAVE BADGE
+            const author = authorInput.value.trim();
+            const pinned = pinnedInput.checked;
+            const content = easyMDE.value();
+            const description = seoDescInput.value.trim();
+            const keywords = tags.join(', ');
+            const image = seoImageInput.value.trim();
+            const additionalFile = additionalFileInput.value.trim();
+            const references = referencesInput.value.split('\n').map(r => r.trim()).filter(r => r);
+            
+            if(!token || !title || !date || !content) {
+                statusEl.innerText = 'Error: Token, Title, Date, and Content required.'; statusEl.className = 'error'; return;
+            }
+
+            // Prevent slug collision (THE FIX FOR OVERWRITING PARTS)
+            let finalSlug = slug;
+            let finalFilename = `_posts/${date.split('T')[0]}-${finalSlug}.md`;
+            finalFilename = finalFilename.replace('_posts/_posts/', '_posts/');
+            if (!finalFilename.startsWith('_posts/')) finalFilename = `_posts/${finalFilename}`;
+
+            let counter = 2;
+            // Only check for collision if it's a new post
+            if (!currentPostSha) {
+                let fileExists = true;
+                while(fileExists && counter < 20) { // Safety cap at 20
+                    try {
+                        const checkRes = await fetch(`https://api.github.com/repos/abdullahbinfahad/writings/contents/${finalFilename}`, { headers: { 'Authorization': `token ${token}` } });
+                        if (checkRes.status === 200) {
+                            // Slug collides, increment
+                            finalSlug = `${slug}-${counter}`;
+                            finalFilename = `_posts/${date.split('T')[0]}-${finalSlug}.md`;
+                            finalFilename = finalFilename.replace('_posts/_posts/', '_posts/');
+                            counter++;
+                        } else {
+                            fileExists = false;
+                        }
+                    } catch(e) {
+                        fileExists = false; // If fetch fails, assume it's free
+                    }
+                }
+                // Update the slug input field so the user sees what it changed to
+                if (finalSlug !== slug) {
+                    slugInput.value = finalSlug;
+                }
+            }
+
+            const jekyllDate = date.replace('T', ' ') + ':00 +0800';
+            
+            let fileContent = `---\nlayout: post\ntitle: "${title.replace(/"/g, '\\"')}"\ndate: ${jekyllDate}\ncategories: [${categories.map(c => `"${c}"`).join(', ')}]\n`;
+            if(seriesName) fileContent += `series: "${seriesName.replace(/"/g, '\\"')}"\n`;
+            if(chapterName) fileContent += `chapter_name: "${chapterName.replace(/"/g, '\\"')}"\n`;
+            if(badge) fileContent += `badge: "${badge.replace(/"/g, '\\"')}"\n`; // WRITE BADGE
+            if(author) fileContent += `author: "${author.replace(/"/g, '\\"')}"\n`;
+            if(pinned) fileContent += `pinned: true\n`;
+            if(description) fileContent += `description: "${description.replace(/"/g, '\\"')}"\n`;
+            if(keywords) fileContent += `keywords: "${keywords.replace(/"/g, '\\"')}"\n`;
+            if(image) fileContent += `image: "${image.replace(/"/g, '\\"')}"\n`;
+            if(additionalFile) fileContent += `additional_file: "${additionalFile.replace(/"/g, '\\"')}"\n`;
+            if(references.length > 0) fileContent += `references: [${references.map(r => `"${r.replace(/"/g, '\\"')}"`).join(', ')}]\n`;
+            fileContent += `---\n${content}`;
+
+            const url = `https://api.github.com/repos/abdullahbinfahad/writings/contents/${finalFilename}`;
+            statusEl.innerText = 'Saving...';
+            
+            try {
+                let shaToSend = currentPostSha;
+                if (!shaToSend || shaToSend === 'null' || shaToSend === 'undefined') {
+                    try { const getRes = await fetch(url, { headers: { 'Authorization': `token ${token}` } }); if(getRes.status === 200) { const data = await getRes.json(); shaToSend = data.sha; } } catch(e) {}
+                }
+
+                const bodyData = { message: shaToSend ? `Updated post: ${title}` : `New post: ${title}`, content: btoa(unescape(encodeURIComponent(fileContent))) };
+                if (shaToSend && typeof shaToSend === 'string' && shaToSend.length > 5) { bodyData.sha = shaToSend; }
+
+                const res = await fetch(url, {
+                    method: 'PUT',
+                    headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify(bodyData)
+                });
+
+                if(res.ok) {
+                    statusEl.innerHTML = `✅ Success! <a href="https://posts.abdullahbinfahad.info" target="_blank">View Blog</a>`;
+                    statusEl.className = 'success';
+                    // Full Reset
+                    titleInput.value = ''; easyMDE.value(''); catInput.value = ''; seriesNameInput.value = '';
+                    chapterNameInput.value = ''; badgeInput.value = ''; // CLEAR BADGE
+                    authorInput.value = 'ABDULLAH BIN FAHAD'; pinnedInput.checked = false;
+                    seoDescInput.value = ''; descCount.textContent = '0'; tags = []; updateTagUI();
+                    seoImageInput.value = ''; additionalFileInput.value = ''; referencesInput.value = '';
+                    mediaAlt.value = ''; mediaCaption.value = ''; uploadFileName.value = ''; fileInput.value = '';
+                    uploadStatus.innerHTML = '';
+                    slugInput.value = ''; isAutoSlugging = true;
+                    if(shaToSend) {
+                        setTimeout(() => {
+                            currentPostSha = null;
+                            saveBtn.innerText = 'Publish New Post'; saveBtn.style.background = '#a82e1d';
+                            deleteBtn.style.display = 'none'; loadPostList();
+                        }, 3000);
+                    }
+                } else {
+                    const err = await res.json();
+                    statusEl.innerText = `❌ GitHub Error: ${err.message}`; statusEl.className = 'error';
+                }
+            } catch(error) { statusEl.innerText = `❌ Connection Error: ${error.message}`; statusEl.className = 'error'; }
+        });
+
+        deleteBtn.addEventListener('click', async () => {
+            if(!currentPostSha || !currentFilename) return;
+            if(!confirm(`Permanently delete "${currentFilename}"?`)) return;
+            const token = saveToken();
+            const url = `https://api.github.com/repos/abdullahbinfahad/writings/contents/_posts/${currentFilename}`;
+            statusEl.innerText = 'Deleting...';
+            try {
+                const res = await fetch(url, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ sha: currentPostSha, message: `Deleted post: ${currentFilename}` })
+                });
+                if(res.ok) {
+                    statusEl.innerHTML = `🗑️ Deleted! Refreshing...`; statusEl.className = 'success';
+                    setTimeout(() => window.location.reload(), 1500);
+                } else {
+                    const err = await res.json();
+                    statusEl.innerText = `❌ Error deleting: ${err.message}`; statusEl.className = 'error';
+                }
+            } catch(error) { statusEl.innerText = `❌ Connection Error: ${error.message}`; statusEl.className = 'error'; }
+        });
+
+        setTimeout(loadPostList, 500);
+    </script>
+</body>
+</html>

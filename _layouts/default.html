@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="google-site-verification" content="139i8SM8HImD_WHj4C3GMQRI5ANDMpjybNgZuuw-nR8" />
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Viewport ensures perfect responsiveness on all devices -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    
+    <!-- 1. SEO TITLE -->
+    <title>{% if page.title %}{{ page.title }} | {% endif %}{{ site.title }}</title>
+    
+    <!-- 2. SEO DESCRIPTION -->
+    <meta name="description" content="{% if page.description %}{{ page.description | strip_html | escape }}{% elsif site.description %}{{ site.description | strip_html | escape }}{% endif %}">
+    
+    <!-- 3. KEYWORDS (Helps Baidu/Bing categorize the page) -->
+    <meta name="keywords" content="{% if page.tags %}{{ page.tags | join: ', ' }}{% else %}blog, writings, articles, abdullahbinfahad, {{ site.title }}{% endif %}">
+    
+    <!-- 4. ROBOTS (Tells search engines to index and follow your links) -->
+    <meta name="robots" content="index, follow">
+    
+    <!-- 5. CANONICAL URL (Prevents duplicate content penalties) -->
+    <link rel="canonical" href="{{ page.url | absolute_url }}">
+    
+    <!-- 6. BAIDU VERIFICATION (Paste your Baidu meta code here for Chinese search engines) -->
+    <!-- <meta name="baidu-site-verification" content="your-baidu-code-here" /> -->
+    
+    <!-- 7. OPEN GRAPH TAGS (For Facebook, LinkedIn, and other social media) -->
+    <meta property="og:type" content="{% if page.url == '/' %}website{% else %}article{% endif %}">
+    <meta property="og:title" content="{% if page.title %}{{ page.title }}{% else %}{{ site.title }}{% endif %}">
+    <meta property="og:description" content="{% if page.description %}{{ page.description | strip_html | escape }}{% elsif site.description %}{{ site.description | strip_html | escape }}{% endif %}">
+    <meta property="og:url" content="{{ page.url | absolute_url }}">
+    <meta property="og:site_name" content="{{ site.title }}">
+    <!-- DYNAMIC SOCIAL IMAGE: Looks for page.image, then post.image, then site.default_image -->
+    <meta property="og:image" content="{% if page.image %}{{ page.image | absolute_url }}{% elsif site.default_image %}{{ site.default_image | absolute_url }}{% else %}https://posts.abdullahbinfahad.info/assets/images/default-banner.jpg{% endif %}">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+
+    <!-- 8. TWITTER CARD TAGS -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{% if page.title %}{{ page.title }}{% else %}{{ site.title }}{% endif %}">
+    <meta name="twitter:description" content="{% if page.description %}{{ page.description | strip_html | escape }}{% elsif site.description %}{{ site.description | strip_html | escape }}{% endif %}">
+    <meta name="twitter:site" content="@abdullahbinfahad"> <!-- Change to your Twitter handle -->
+    <meta name="twitter:image" content="{% if page.image %}{{ page.image | absolute_url }}{% elsif site.default_image %}{{ site.default_image | absolute_url }}{% else %}https://posts.abdullahbinfahad.info/assets/images/default-banner.jpg{% endif %}">
+
+    <!-- 9. JSON-LD STRUCTURED DATA (Crucial for Google/Bing to display rich snippets) -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "{% if page.url == '/' %}WebSite{% else %}BlogPosting{% endif %}",
+        "name": "{{ site.title }}",
+        "url": "{{ page.url | absolute_url }}",
+        "description": "{% if page.description %}{{ page.description | strip_html | escape }}{% elsif site.description %}{{ site.description | strip_html | escape }}{% endif %}"
+        {% if page.url != '/' %}
+        ,
+        "author": {
+            "@type": "Person",
+            "name": "{% if page.author %}{{ page.author }}{% elsif site.author %}{{ site.author }}{% else %}Abdullah Bin Fahad{% endif %}"
+        },
+        "headline": "{{ page.title }}",
+        "datePublished": "{{ page.date | date_to_xmlschema }}",
+        "dateModified": "{{ page.last_modified_at | date_to_xmlschema | default: page.date | date_to_xmlschema }}",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "{{ page.url | absolute_url }}"
+        }
+        {% endif %}
+    }
+    </script>
+
+    <!-- 10. PREMIUM FONTS & STYLES -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Noto+Sans+SC:wght@400;700&family=Noto+Serif+Bengali:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+<body>
+    <div class="blog-wrapper">
+        <header class="blog-header">
+            <div class="container header-container">
+                <div class="header-inner">
+                    <!-- Logo clicked sends users to https://abdullahbinfahad.info as requested -->
+                    <h1 class="site-title">
+                        <a href="https://abdullahbinfahad.info" style="display: flex; align-items: center; gap: 12px; text-decoration: none;">
+                            <!-- Updated with your logo image -->
+                            <img src="/assets/uploads/abdullahbinfahad.jpg" alt="ABDULLAH BIN FAHAD" class="site-logo">
+                            <span class="site-text">{{ site.title }}</span>
+                        </a>
+                    </h1>
+                    <nav class="site-nav">
+                        <a href="{{ site.url }}">Home</a>
+                        <a href="/archive.html">Archive</a>
+                    </nav>
+                </div>
+            </div>
+        </header>
+        
+        <main class="container blog-content fade-in">
+            {{ content }}
+        </main>
+        
+        <footer class="blog-footer">
+            <div class="container footer-container">
+                <p>&copy; 2026 abdullahbinfahad.com</p>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

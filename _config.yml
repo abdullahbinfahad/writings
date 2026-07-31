@@ -1,0 +1,43 @@
+# ==============================================
+# SITE IDENTITY & SEO
+# ==============================================
+title: "ABDULLAH BIN FAHAD"
+email: abdullahbinfahad.abf@gmail.com
+description: >- 
+  Daily writings, thoughts, stories, games, and jokes by Abdullah Bin Fahad.
+tagline: "Thoughts & Stories from Around the World"
+author: Abdullah Bin Fahad
+
+# ==============================================
+# URL SETTINGS
+# ==============================================
+baseurl: ""                                
+url: "https://posts.abdullahbinfahad.info" 
+permalink: /:slug/                         
+
+# ==============================================
+# SOCIAL & IMAGES (For Open Graph & Twitter Cards)
+# ==============================================
+twitter_username: abdullahbinfahad
+github_username: abdullahbinfahad
+default_image: "https://posts.abdullahbinfahad.info/assets/images/default-banner.jpg"
+
+# ==============================================
+# CUSTOM SITE LINKS (Add Games and Jokes here)
+# ==============================================
+games_title: "Games"
+games_url: "https://games.abdullahbinfahad.info"
+jokes_title: "Jokes"
+jokes_url: "https://jokes.abdullahbinfahad.info"
+
+# ==============================================
+# BUILD & PUBLISHING
+# ==============================================
+markdown: kramdown
+timezone: Asia/Shanghai                     
+
+# ==============================================
+# PLUGINS
+# ==============================================
+plugins:
+  - jekyll-feed
