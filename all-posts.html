@@ -1,0 +1,273 @@
+---
+layout: default
+title: All Posts
+permalink: /all-posts.html
+---
+<style>
+    /* Container for the Post Layout */
+    .post-layout.all-posts-layout {
+        display: grid;
+        grid-template-columns: 1fr 320px;
+        gap: 4rem;
+        margin-bottom: 4rem;
+        width: 100%;
+        margin: 0 auto;
+    }
+
+    /* Split the left column into Timeline + Posts */
+    .all-posts-inner {
+        display: flex;
+        flex-direction: row;
+        gap: 2rem;
+        min-width: 0;
+    }
+
+    /* Sticky Vertical Timeline Sidebar */
+    .vertical-timeline {
+        position: sticky;
+        top: 2rem;
+        max-height: 85vh;
+        overflow-y: auto;
+        flex: 0 0 140px;
+        padding-right: 1rem;
+        border-right: 1px solid #e5e7eb;
+        scrollbar-width: thin;
+    }
+    .vertical-timeline::-webkit-scrollbar {
+        width: 4px;
+    }
+    .vertical-timeline::-webkit-scrollbar-thumb {
+        background: #a82e1d;
+        border-radius: 10px;
+    }
+    .vertical-timeline h4 {
+        font-family: var(--font-sans);
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #6b7280;
+        margin-bottom: 1.5rem;
+    }
+    .vertical-timeline ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    .vertical-timeline li {
+        margin-bottom: 0.8rem;
+    }
+    .vertical-timeline .year-link {
+        font-weight: 700;
+        color: #a82e1d;
+        text-decoration: none;
+        font-size: 0.9rem;
+        display: block;
+        margin-bottom: 0.4rem;
+    }
+    .vertical-timeline .month-link {
+        display: block;
+        color: #4b5563;
+        text-decoration: none;
+        font-size: 0.8rem;
+        padding-left: 0.5rem;
+        transition: color 0.2s;
+    }
+    .vertical-timeline .month-link:hover {
+        color: #a82e1d;
+    }
+
+    /* Year/Month Headers with Scroll Margin */
+    .timeline-year-header {
+        font-family: var(--font-sans);
+        font-size: 1.5rem;
+        color: #a82e1d;
+        border-bottom: 2px solid #e5e7eb;
+        padding-bottom: 0.5rem;
+        margin-top: 2.5rem;
+        scroll-margin-top: 80px;
+    }
+    .timeline-month-header {
+        font-family: var(--font-sans);
+        font-size: 1.1rem;
+        color: #4b5563;
+        margin-top: 1.5rem;
+        margin-bottom: 0.5rem;
+        scroll-margin-top: 80px;
+    }
+
+    /* Mobile Responsive for All Posts Page */
+    @media (max-width: 900px) {
+        .post-layout.all-posts-layout {
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+        .all-posts-inner {
+            flex-direction: column;
+        }
+        /* Hide sticky timeline on mobile to save space, or turn it horizontal */
+        .vertical-timeline {
+            position: static;
+            max-height: none;
+            flex: 1 1 100%;
+            border-right: none;
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            align-items: center;
+            overflow-x: auto;
+        }
+        .vertical-timeline ul {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: nowrap;
+        }
+        .vertical-timeline li {
+            margin-bottom: 0;
+            white-space: nowrap;
+        }
+        .vertical-timeline .year-link {
+            margin-bottom: 0;
+        }
+        .vertical-timeline .month-link {
+            padding-left: 0;
+        }
+    }
+</style>
+
+<div class="post-layout all-posts-layout fade-in">
+    
+    <!-- LEFT COLUMN: Timeline & Posts -->
+    <div class="post-article">
+        <div class="all-posts-inner">
+            
+            <!-- VERTICAL TIMELINE NAVIGATION -->
+            <nav class="vertical-timeline">
+                <h4>Jump to Date</h4>
+                <ul>
+                    {% assign postsByYear = site.posts | group_by_exp:"post", "post.date | date: '%Y'" %}
+                    {% for year in postsByYear %}
+                        <li>
+                            <a href="#year-{{ year.name }}" class="year-link">{{ year.name }}</a>
+                            {% assign postsByMonth = year.items | group_by_exp:"post", "post.date | date: '%B'" %}
+                            {% for month in postsByMonth %}
+                                <a href="#month-{{ year.name }}-{{ month.name | slugify }}" class="month-link">{{ month.name }}</a>
+                            {% endfor %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            </nav>
+
+            <!-- POSTS LIST -->
+            <div class="post-grid" style="flex: 1; width: 100%;">
+                {% assign postsByYear = site.posts | group_by_exp:"post", "post.date | date: '%Y'" %}
+                {% for year in postsByYear %}
+                    <h2 id="year-{{ year.name }}" class="timeline-year-header">{{ year.name }}</h2>
+                    {% assign postsByMonth = year.items | group_by_exp:"post", "post.date | date: '%B'" %}
+                    {% for month in postsByMonth %}
+                        <h3 id="month-{{ year.name }}-{{ month.name | slugify }}" class="timeline-month-header">{{ month.name }}</h3>
+                        {% for post in month.items %}
+                            {% assign part_index = 0 %}
+                            {% assign total_parts = 0 %}
+                            {% if post.series %}
+                                {% assign series_posts = site.posts | where: "series", post.series | sort: "date" %}
+                                {% assign total_parts = series_posts.size %}
+                                {% for sp in series_posts %}
+                                    {% if sp.url == post.url %}
+                                        {% assign part_index = forloop.index0 %}
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                            
+                            <!-- EXACT SAME CARD STYLE AS HOME PAGE -->
+                            <div class="post-card {% if post.pinned %}pinned{% endif %}" data-categories="{{ post.categories | join: ',' | downcase }}">
+                                <div class="card-content">
+                                    <div class="badge-wrapper" style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 0.5rem;">
+                                        {% if post.pinned %}
+                                        <span class="badge-label badge-featured">📌 Featured</span>
+                                        {% endif %}
+                                        {% if post.badge %}
+                                        <span class="badge-label badge-{{ post.badge | downcase }}">{{ post.badge }}</span>
+                                        {% endif %}
+                                    </div>
+                                    <h2><a href="{{ post.url }}">{{ post.title }}{% if post.series %} (Part {{ part_index | plus: 1 }} of {{ total_parts }}){% endif %}</a></h2>
+                                    <div class="post-meta">
+                                        <span class="post-date"><i class="far fa-calendar-alt"></i> {{ post.date | date: "%B %d, %Y" }}</span>
+                                        {% if post.author %}
+                                        <span class="post-author"><i class="fas fa-user"></i> {{ post.author }}</span>
+                                        {% endif %}
+                                        {% if post.categories.size > 0 %}<span class="post-cats"><i class="fas fa-folder-open"></i> {{ post.categories | join: ", " }}</span>{% endif %}
+                                    </div>
+                                    <p class="post-excerpt">{{ post.excerpt | strip_html | truncate: 180 }}</p>
+                                    <a href="{{ post.url }}" class="read-more">Continue Reading &rarr;</a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                {% endfor %}
+            </div>
+
+        </div>
+    </div>
+
+    <!-- RIGHT SIDEBAR (Exact same as Home Page) -->
+    <aside class="post-sidebar">
+        <div class="sidebar-widget contact-widget">
+            <h3><i class="fas fa-paper-plane"></i> Upload Your Content</h3>
+            <p>Got a story, guest post, or letter?</p>
+            <button id="openUploadForm" class="contact-btn" style="width:100%; border:none; cursor:pointer; background:#a82e1d; color:white; padding:12px; border-radius:30px; font-weight:600;">Upload Your Content</button>
+        </div>
+        <div class="sidebar-widget">
+            <h3><i class="fas fa-archive"></i> Monthly Archive</h3>
+            <ul class="archive-list-sidebar">
+                {% assign postsByMonth = site.posts | group_by_exp:"post", "post.date | date: '%B %Y'" %}
+                {% for month in postsByMonth %}
+                    <li><a href="/archive.html#{{ month.name | slugify }}">{{ month.name }} ({{ month.items.size }})</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="sidebar-widget">
+            <h3><i class="fas fa-tags"></i> Categories</h3>
+            <div class="category-cloud">
+                {% assign categories = site.categories | sort %}
+                {% for category in categories %}
+                    <a href="/archive.html#{{ category[0] | slugify }}" class="cat-tag">{{ category[0] }}</a>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="sidebar-widget" style="text-align: center; padding: 1.5rem;">
+            <script type='text/javascript' src='https://storage.ko-fi.com/cdn/widget/Widget_2.js'></script>
+            <script type='text/javascript'>kofiwidget2.init('Support me on Ko-fi', '#c4bbb5', 'A8M4245EW9');kofiwidget2.draw();</script>
+        </div>
+    </aside>
+</div>
+
+<!-- UPLOAD MODAL (Needs to be here so the button works) -->
+<div id="uploadModal" class="modal-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:9999; justify-content:center; align-items:center; backdrop-filter:blur(4px);">
+    <div class="modal-box" style="background:white; max-width:500px; width:90%; padding:35px; border-radius:20px; position:relative; box-shadow:0 25px 50px rgba(0,0,0,0.3);">
+        <span id="closeModal" style="position:absolute; top:15px; right:20px; font-size:28px; cursor:pointer; color:#64748b;">&times;</span>
+        <h2 style="color:#a82e1d; margin-top:0; border-left:4px solid #a82e1d; padding-left:12px;">Submit Your Story</h2>
+        <form action="https://formspree.io/f/xvzeyoqo" method="POST" style="display:flex; flex-direction:column; gap:15px; margin-top:20px;">
+            <input type="text" name="name" placeholder="Your Identity / Name" required style="padding:14px; border:1px solid #d1d5db; border-radius:12px; font-family:inherit; width:100%;">
+            <input type="email" name="email" placeholder="Your Email" required style="padding:14px; border:1px solid #d1d5db; border-radius:12px; font-family:inherit; width:100%;">
+            <textarea name="message" placeholder="Paste your content, post, or letter here..." rows="6" required style="padding:14px; border:1px solid #d1d5db; border-radius:12px; font-family:inherit; width:100%; resize:vertical;"></textarea>
+            <button type="submit" style="background:#a82e1d; color:white; border:none; padding:14px; border-radius:12px; font-size:1rem; font-weight:600; cursor:pointer;">Submit for Review</button>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Same Modal Logic as Home Page
+    const openBtn = document.getElementById('openUploadForm');
+    const modal = document.getElementById('uploadModal');
+    const closeBtn = document.getElementById('closeModal');
+    if(openBtn && modal) {
+        openBtn.addEventListener('click', function() { modal.style.display = 'flex'; });
+        if(closeBtn) closeBtn.addEventListener('click', function() { modal.style.display = 'none'; });
+        window.addEventListener('click', function(e) { if(e.target === modal) modal.style.display = 'none'; });
+    }
+});
+</script>
