@@ -199,7 +199,7 @@ body {
 .related-card:hover h4 { color: $accent-red; }
 .related-card .related-date { font-size: 0.85rem; color: $text-muted; font-family: var(--font-sans); }
 
-// --- ARCHIVE PAGE ---
+// --- ARCHIVE PAGE (MISSING ACCORDION & STORY STYLES ADDED) ---
 .archive-layout { display: grid; grid-template-columns: 1fr; gap: 3rem; padding-bottom: 4rem; }
 .archive-timeline { background: $card-bg; padding: 2rem; border-radius: 16px; border: 1px solid $border-light; }
 .archive-section-title { font-family: var(--font-sans); font-size: 1.5rem; border-left: 4px solid $accent-red; padding-left: 0.8rem; margin-bottom: 1.5rem; }
@@ -225,6 +225,37 @@ body {
 .folder-contents li:last-child { border-bottom: none; }
 .folder-contents a { text-decoration: none; color: $text-main; font-size: 0.9rem; transition: 0.2s; }
 .folder-contents a:hover { color: $accent-red; }
+
+// --- TIMELINE ACCORDION & STORY HUBS (FIXES TOUCH & ANIMATION) ---
+.month-item { border-bottom: 1px dashed $border-light; }
+.month-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 0; cursor: pointer; user-select: none; transition: 0.2s;
+    color: $text-main; touch-action: manipulation; /* Improves mobile touch response */
+}
+.month-header:hover { color: $accent-red; }
+.month-header .arrow { transition: transform 0.3s ease; font-size: 0.8rem; color: $text-muted; }
+.month-header.open .arrow { transform: rotate(90deg); color: $accent-red; }
+.month-header.open .month-name { color: $accent-red; }
+.month-content {
+    max-height: 0; overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1); /* Smooth slide */
+    will-change: max-height;
+}
+.month-content ul { padding-bottom: 0.8rem; margin: 0; }
+
+.story-series { margin-bottom: 1.2rem; border-left: 3px solid $accent-red; padding-left: 12px; }
+.series-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+.series-title { font-weight: 700; font-family: var(--font-sans); font-size: 1.1rem; color: $text-main; }
+.series-count { font-size: 0.8rem; color: $text-muted; }
+.series-parts { list-style: none; padding: 0; margin: 0; }
+.series-parts li { padding: 0.25rem 0; border-bottom: 1px dashed $border-light; }
+.series-parts li:last-child { border-bottom: none; }
+.series-parts a { text-decoration: none; color: $text-main; font-size: 0.95rem; transition: 0.2s; }
+.series-parts a:hover { color: $accent-red; padding-left: 6px; }
+
+.poetry-hub ul.archive-list li { border-bottom: 1px dashed $border-light; padding: 0.4rem 0; display: flex; justify-content: space-between; }
+.poetry-hub ul.archive-list li:last-child { border-bottom: none; }
 
 // --- RESPONSIVE ---
 @media (min-width: 901px) {
