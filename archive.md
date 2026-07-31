@@ -48,7 +48,7 @@ permalink: /archive.html
     <!-- RIGHT COLUMN: Stories, Novels, Poetry & Categories -->
     <div class="archive-categories" style="display: flex; flex-wrap: wrap; gap: 2rem; padding: 0; background: transparent; border: none; border-radius: 0;">
         
-        <!-- 1. STORIES & NOVELS HUB (UPDATED FOR PERFECT PART ORDER) -->
+        <!-- 1. STORIES & NOVELS HUB (UPDATED WITH ANCHOR ID) -->
         <div class="archive-card story-hub" style="flex: 1 1 280px; min-width: 240px;">
             <h2 class="archive-section-title" style="margin-bottom: 1rem;"><i class="fas fa-book-open"></i> Stories & Novels</h2>
             {% assign series_map = site.posts | group_by_exp:"post", "post.series" %}
@@ -56,13 +56,14 @@ permalink: /archive.html
             {% for series in series_map %}
                 {% if series.name != "" and series.name != nil %}
                     {% assign has_series = true %}
-                    <div class="story-series">
+                    <!-- Added ID here to create a clickable anchor target -->
+                    <div class="story-series" id="{{ series.name | slugify }}">
                         <div class="series-header">
                             <span class="series-title">{{ series.name }}</span>
                             <span class="series-count">({{ series.items.size }} parts)</span>
                         </div>
                         <ul class="series-parts">
-                            <!-- SORTED BY DATE: Ensures Part 1 is always at the top, Part 2 below it, etc. -->
+                            <!-- SORTED BY DATE: Ensures Part 1 is always at the top -->
                             {% assign sorted_parts = series.items | sort: "date" %}
                             {% for post in sorted_parts %}
                             <li>
@@ -103,7 +104,7 @@ permalink: /archive.html
             {% endif %}
         </div>
 
-        <!-- 3. CATEGORY FOLDERS -->
+        <!-- 3. CATEGORY FOLDERS (UPDATED LINK TO ANCHOR) -->
         <div class="archive-card" style="flex: 1 1 280px; min-width: 240px;">
             <h2 class="archive-section-title" style="margin-bottom: 1rem;"><i class="fas fa-folder-open"></i> By Category</h2>
             {% if site.categories %}
@@ -121,7 +122,8 @@ permalink: /archive.html
                                 {% if post.series %}
                                     {% unless displayed_series contains post.series %}
                                         {% assign displayed_series = displayed_series | append: "|" | append: post.series %}
-                                        <li><a href="{{ post.url }}">{{ post.series }}</a></li>
+                                        <!-- Changed URL to point to the anchor ID -->
+                                        <li><a href="#{{ post.series | slugify }}">{{ post.series }}</a></li>
                                     {% endunless %}
                                 {% else %}
                                     <li><a href="{{ post.url }}">{{ post.title }}</a></li>
@@ -167,5 +169,15 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+
+    // Auto-scroll to the anchor if the URL has a hash
+    if(window.location.hash) {
+        const target = document.querySelector(window.location.hash);
+        if(target) {
+            setTimeout(() => {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 500); // 500ms delay to wait for the accordion to render
+        }
+    }
 });
 </script>
