@@ -50,14 +50,6 @@ body {
 .header-inner { width: 100% !important; max-width: 1400px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
 
 // Logo Styling
-.site-logo {
-    height: 40px;
-    width: auto;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid $accent-red;
-    background: #fff;
-}
 .site-text {
     font-size: 1.8rem;
     font-weight: 700;
