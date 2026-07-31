@@ -135,8 +135,24 @@ body {
 .see-more-btn:hover { background: #8b1f12; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(168, 46, 29, 0.2); }
 
 // --- POST PAGE (16:9 IMAGE LOCK & SERIES NAV) ---
-.featured-image-wrapper { position: relative; width: 100% !important; aspect-ratio: 16 / 9 !important; border-radius: 16px; overflow: hidden; border: 1px solid $border-light; margin: 0 0 1.5rem 0; background: #f3f4f6; }
-.featured-image-wrapper img { width: 100% !important; height: 100% !important; object-fit: cover !important; display: block; }
+.featured-image-wrapper { 
+    position: relative; 
+    width: 100% !important; 
+    aspect-ratio: 16 / 9 !important; 
+    border-radius: 16px; 
+    overflow: hidden; 
+    border: 1px solid $border-light; 
+    margin: 0 0 1.5rem 0; 
+    background: #f3f4f6; 
+    display: block !important; /* Forces block layout to squash gaps */
+}
+.featured-image-wrapper img,
+.featured-image-wrapper video { 
+    width: 100% !important; 
+    height: 100% !important; 
+    object-fit: cover !important; 
+    display: block; 
+}
 .post-meta { color: $text-muted; font-size: 0.85rem; border-bottom: 1px solid $border-light; padding-bottom: 1.2rem; margin-bottom: 2.5rem; font-family: var(--font-sans); }
 
 .premium-body-wrapper { max-width: 760px; margin: 0 auto; width: 100% !important; }
