@@ -10,11 +10,24 @@ layout: default
         width: 100%;
     }
     
-    /* FIX: Removes the dot and indent from the References section */
+    /* FIX: Removes the dot, indent, and styles the References section differently */
     .post-references ul {
         list-style: none !important;
         padding-left: 0 !important;
         margin: 0;
+    }
+    .post-references ul li {
+        font-family: var(--font-sans); /* Uses the clean sans-serif font */
+        font-size: 0.8rem;            /* Significantly smaller than body text */
+        color: #4b5563;                /* A slightly muted gray for subtlety */
+        line-height: 1.6;
+        padding: 0.2rem 0;             /* Adds a tiny bit of breathing room between lines */
+    }
+    .post-references h4 {
+        font-size: 0.9rem;             /* Matches the smaller style for the header */
+        font-family: var(--font-sans);
+        color: #1a1a1a;
+        margin-bottom: 0.4rem;
     }
     
     /* Ensures the 16:9 wrapper works flawlessly for both images and videos */
