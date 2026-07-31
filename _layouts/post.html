@@ -3,85 +3,39 @@ layout: default
 ---
 <style>
     /* Makes Related Posts cards wider & horizontal */
-    .related-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: 1.8rem;
-        width: 100%;
-    }
+    .related-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.8rem; width: 100%; }
+    .post-references ul { list-style: none !important; padding-left: 0 !important; margin: 0; }
+    .post-references ul li { font-family: var(--font-sans); font-size: 0.8rem; color: #4b5563; line-height: 1.6; padding: 0.2rem 0; }
+    .post-references h4 { font-size: 0.9rem; font-family: var(--font-sans); color: #1a1a1a; margin-bottom: 0.4rem; }
     
-    /* Removes bullet dot, styles References small & clean */
-    .post-references ul {
-        list-style: none !important;
-        padding-left: 0 !important;
-        margin: 0;
-    }
-    .post-references ul li {
-        font-family: var(--font-sans);
-        font-size: 0.8rem;
-        color: #4b5563;
-        line-height: 1.6;
-        padding: 0.2rem 0;
-    }
-    .post-references h4 {
-        font-size: 0.9rem;
-        font-family: var(--font-sans);
-        color: #1a1a1a;
-        margin-bottom: 0.4rem;
-    }
-    
-    /* ABSOLUTE 16:9 LOCK – works for images AND videos */
     .featured-image-wrapper {
-        position: relative;
-        width: 100% !important;
-        aspect-ratio: 16 / 9 !important;
-        border-radius: 16px;
-        overflow: hidden;
-        border: 1px solid #e5e7eb;
-        margin: 0;
-        background: #f3f4f6;
-        display: block !important;
-        box-sizing: border-box;
+        position: relative; width: 100% !important; aspect-ratio: 16 / 9 !important;
+        border-radius: 16px; overflow: hidden; border: 1px solid #e5e7eb; margin: 0;
+        background: #f3f4f6; display: block !important; box-sizing: border-box;
     }
-    .featured-image-wrapper img,
-    .featured-image-wrapper video {
-        width: 100% !important;
-        height: 100% !important;
-        object-fit: cover !important;
-        display: block;
-        vertical-align: top; /* eliminates tiny gaps */
-        box-sizing: border-box;
+    .featured-image-wrapper img, .featured-image-wrapper video {
+        width: 100% !important; height: 100% !important; object-fit: cover !important;
+        display: block; vertical-align: top; box-sizing: border-box;
     }
-
-    /* CAPTION STYLING (Different font - Italic Sans-Serif) */
     .media-figure figcaption {
-        font-family: var(--font-sans);
-        font-size: 0.9rem;
-        color: #6b7280;
-        text-align: center;
-        padding-top: 0.8rem;
-        line-height: 1.4;
-        font-style: italic;
-        max-width: 100%;
+        font-family: var(--font-sans); font-size: 0.9rem; color: #6b7280;
+        text-align: center; padding-top: 0.8rem; line-height: 1.4; font-style: italic; max-width: 100%;
     }
 </style>
 
 <div class="post-layout">
     <article class="post-article fade-in">
         <h1 class="premium-headline">{{ page.title }}</h1>
-
         {% if page.chapter_name %}
         <div class="chapter-subtitle" style="font-family: var(--font-sans); font-size: 1.2rem; color: #6b7280; margin-bottom: 1.5rem; border-left: 4px solid #a82e1d; padding-left: 1rem; padding-top: 0.25rem; padding-bottom: 0.25rem; background: #f9fafb;">
             {{ page.chapter_name }}
         </div>
         {% endif %}
 
-        <!-- 16:9 FEATURED CONTAINER WITH CAPTION -->
-        {% if page.image or page.attachment %}
         <figure class="media-figure" style="margin: 0 0 1.5rem 0; width: 100%; max-width: 760px; margin-left: auto; margin-right: auto;">
+            {% if page.image or page.attachment %}
             <div class="featured-image-wrapper">
-                {% if page.image %}
-                    <img src="{{ page.image | relative_url }}" alt="{{ page.title }}" loading="lazy">
+                {% if page.image %}<img src="{{ page.image | relative_url }}" alt="{{ page.title }}" loading="lazy">
                 {% elsif page.attachment %}
                     {% assign ext = page.attachment | split: '.' | last | downcase %}
                     {% if ext == 'png' or ext == 'jpg' or ext == 'jpeg' or ext == 'gif' or ext == 'webp' or ext == 'svg' %}
@@ -91,23 +45,16 @@ layout: default
                     {% endif %}
                 {% endif %}
             </div>
-            <!-- Caption placed directly underneath the media -->
             {% if page.caption or page.image_caption %}
             <figcaption>{{ page.caption | default: page.image_caption }}</figcaption>
             {% endif %}
+            {% endif %}
         </figure>
-        {% endif %}
 
-        <!-- PDF fallback -->
         {% if page.attachment %}
             {% assign ext = page.attachment | split: '.' | last | downcase %}
-            {% if ext == 'pdf' %}
-            <div class="attachment-viewer">
-                <iframe src="{{ page.attachment }}" title="PDF Reader"></iframe>
-            </div>
-            {% endif %}
+            {% if ext == 'pdf' %}<div class="attachment-viewer"><iframe src="{{ page.attachment }}" title="PDF Reader"></iframe></div>{% endif %}
         {% endif %}
-
         {% if page.location %}<div class="post-location"><i class="fas fa-map-marker-alt"></i> {{ page.location }}</div>{% endif %}
         
         <div class="post-meta" style="font-size: 0.85rem; color: #6b7280; font-family: var(--font-sans); border-bottom: 1px solid #e5e7eb; padding-bottom: 1.2rem; margin-bottom: 2.5rem;">
@@ -119,58 +66,29 @@ layout: default
         <div class="premium-body-wrapper"><div class="post-body justified-text">{{ content }}</div></div>
 
         {% if page.references %}
-        <div class="post-references">
-            <h4><i class="fas fa-bookmark"></i> References & Links</h4>
-            <ul>{% for ref in page.references %}<li>{{ ref }}</li>{% endfor %}</ul>
-        </div>
+        <div class="post-references"><h4><i class="fas fa-bookmark"></i> References & Links</h4><ul>{% for ref in page.references %}<li>{{ ref }}</li>{% endfor %}</ul></div>
         {% endif %}
 
-        <!-- Perfect Series Navigation -->
         {% if page.series %}
         <div class="series-navigation">
             <h3><i class="fas fa-layer-group"></i> {{ page.series }} Series</h3>
             <div class="series-links">
                 {% assign series_posts = site.posts | where_exp:"post", "post.series == page.series" | sort: "date" %}
-                {% assign prev_post = nil %}
-                {% assign next_post = nil %}
-                {% assign found_self = false %}
-                {% assign total_parts = series_posts.size %}
-                {% assign current_part = 0 %}
-
+                {% assign prev_post = nil %}{% assign next_post = nil %}{% assign found_self = false %}{% assign total_parts = series_posts.size %}{% assign current_part = 0 %}
                 {% for post in series_posts %}
-                    {% if found_self %}
-                        {% assign next_post = post %}
-                        {% break %}
-                    {% endif %}
-                    
-                    {% if post.url == page.url %}
-                        {% assign found_self = true %}
-                        {% assign current_part = forloop.index0 | plus: 1 %}
-                    {% else %}
-                        {% assign prev_post = post %}
-                    {% endif %}
+                    {% if found_self %}{% assign next_post = post %}{% break %}{% endif %}
+                    {% if post.url == page.url %}{% assign found_self = true %}{% assign current_part = forloop.index0 | plus: 1 %}{% else %}{% assign prev_post = post %}{% endif %}
                 {% endfor %}
-
                 <div class="prev-next-wrapper">
-                    {% if prev_post %}
-                        <a href="{{ prev_post.url }}" class="series-btn prev-btn"><i class="fas fa-arrow-left"></i> Previous Part</a>
-                    {% else %}
-                        <span class="series-btn disabled">Start of Series</span>
-                    {% endif %}
-
+                    {% if prev_post %}<a href="{{ prev_post.url }}" class="series-btn prev-btn"><i class="fas fa-arrow-left"></i> Previous Part</a>{% else %}<span class="series-btn disabled">Start of Series</span>{% endif %}
                     <span class="part-indicator">Part {{ current_part }} of {{ total_parts }}</span>
-
-                    {% if next_post %}
-                        <a href="{{ next_post.url }}" class="series-btn next-btn">Next Part <i class="fas fa-arrow-right"></i></a>
-                    {% else %}
-                        <span class="series-btn disabled">End of Series</span>
-                    {% endif %}
+                    {% if next_post %}<a href="{{ next_post.url }}" class="series-btn next-btn">Next Part <i class="fas fa-arrow-right"></i></a>{% else %}<span class="series-btn disabled">End of Series</span>{% endif %}
                 </div>
             </div>
         </div>
         {% endif %}
 
-        <!-- Wider Horizontal Related Cards -->
+        <!-- RELATED POSTS WITH FIXED PART NUMBERS -->
         <div class="related-posts-section">
             <h3><i class="fas fa-bolt"></i> You might also like...</h3>
             <div class="related-grid">
@@ -179,12 +97,12 @@ layout: default
                 {% for post in related_posts limit:4 %}
                     {% assign part_index = 0 %}
                     {% if post.series %}
-                        {% for sp in site.posts %}
-                            {% if sp.series == post.series %}
-                                {% if sp.url == post.url %}
-                                    {% assign part_index = forloop.index0 %}
-                                    {% break %}
-                                {% endif %}
+                        <!-- FIXED LOGIC: Filter and sort the series posts, then find the index -->
+                        {% assign series_posts = site.posts | where_exp:"p", "p.series == post.series" | sort: "date" %}
+                        {% for sp in series_posts %}
+                            {% if sp.url == post.url %}
+                                {% assign part_index = forloop.index0 %}
+                                {% break %}
                             {% endif %}
                         {% endfor %}
                     {% endif %}
@@ -201,23 +119,16 @@ layout: default
 
     <aside class="post-sidebar fade-in">
         <div class="sidebar-widget contact-widget">
-            <h3><i class="fas fa-paper-plane"></i> Upload Your Content</h3>
-            <p>Got a story, guest post, or letter?</p>
+            <h3><i class="fas fa-paper-plane"></i> Upload Your Content</h3><p>Got a story, guest post, or letter?</p>
             <button id="openUploadForm" class="contact-btn" style="width:100%; border:none; cursor:pointer; background:#a82e1d; color:white; padding:12px; border-radius:30px; font-weight:600;">Upload Your Content</button>
         </div>
         <div class="sidebar-widget">
             <h3><i class="fas fa-archive"></i> Monthly Archive</h3>
-            <ul class="archive-list-sidebar">
-                {% assign postsByMonth = site.posts | group_by_exp:"post", "post.date | date: '%B %Y'" %}
-                {% for month in postsByMonth %}<li><a href="/archive.html#{{ month.name | slugify }}">{{ month.name }} ({{ month.items.size }})</a></li>{% endfor %}
-            </ul>
+            <ul class="archive-list-sidebar">{% assign postsByMonth = site.posts | group_by_exp:"post", "post.date | date: '%B %Y'" %}{% for month in postsByMonth %}<li><a href="/archive.html#{{ month.name | slugify }}">{{ month.name }} ({{ month.items.size }})</a></li>{% endfor %}</ul>
         </div>
         <div class="sidebar-widget">
             <h3><i class="fas fa-tags"></i> Categories</h3>
-            <div class="category-cloud">
-                {% assign categories = site.categories | sort %}
-                {% for category in categories %}<a href="/archive.html#{{ category[0] | slugify }}" class="cat-tag">{{ category[0] }}</a>{% endfor %}
-            </div>
+            <div class="category-cloud">{% assign categories = site.categories | sort %}{% for category in categories %}<a href="/archive.html#{{ category[0] | slugify }}" class="cat-tag">{{ category[0] }}</a>{% endfor %}</div>
         </div>
         <div class="sidebar-widget" style="text-align: center; padding: 1.5rem;">
             <script type='text/javascript' src='https://storage.ko-fi.com/cdn/widget/Widget_2.js'></script>
