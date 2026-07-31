@@ -44,11 +44,10 @@ permalink: /archive.html
         {% endfor %}
     </div>
 
-    <!-- RIGHT COLUMN: Stories, Novels, Poetry & Categories (UPDATED LAYOUT) -->
-    <!-- Added: display: flex; flex-wrap: wrap; gap: 2rem; so they flow side-by-side on desktop and wrap on mobile. Removed common background/padding so they act as individual cards. -->
+    <!-- RIGHT COLUMN: Stories, Novels, Poetry & Categories -->
     <div class="archive-categories" style="display: flex; flex-wrap: wrap; gap: 2rem; padding: 0; background: transparent; border: none; border-radius: 0;">
         
-        <!-- 1. STORIES & NOVELS HUB -->
+        <!-- 1. STORIES & NOVELS HUB (UPDATED FOR PERFECT PART ORDER) -->
         <div class="archive-card story-hub" style="flex: 1 1 280px; min-width: 240px;">
             <h2 class="archive-section-title" style="margin-bottom: 1rem;"><i class="fas fa-book-open"></i> Stories & Novels</h2>
             {% assign series_map = site.posts | group_by_exp:"post", "post.series" %}
@@ -62,7 +61,9 @@ permalink: /archive.html
                             <span class="series-count">({{ series.items.size }} parts)</span>
                         </div>
                         <ul class="series-parts">
-                            {% for post in series.items %}
+                            <!-- SORTED BY DATE: Ensures Part 1 is always at the top, Part 2 below it, etc. -->
+                            {% assign sorted_parts = series.items | sort: "date" %}
+                            {% for post in sorted_parts %}
                             <li>
                                 <a href="{{ post.url }}">
                                     {% if post.chapter_name %}
