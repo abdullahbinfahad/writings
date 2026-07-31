@@ -143,26 +143,28 @@ permalink: /archive.html
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const headers = document.querySelectorAll('.month-header');
-    const now = new Date();
-    const currentYear = now.getFullYear();
-    const currentMonth = now.getMonth() + 1; 
-    let targetMonths = [];
-    for(let i = 0; i < 3; i++) {
-        let d = new Date(currentYear, currentMonth - 1 - i, 1);
-        let y = d.getFullYear();
-        let m = String(d.getMonth() + 1).padStart(2, '0');
-        targetMonths.push(`${y}-${m}`);
-    }
+    
+    // 1. Find the latest month header by comparing data-date attributes
+    let latestDate = '';
     headers.forEach(header => {
         const dateStr = header.dataset.date;
+        if (dateStr > latestDate) {
+            latestDate = dateStr;
+        }
+    });
+
+    // 2. Open only the latest month (others stay closed)
+    headers.forEach(header => {
         const content = header.nextElementSibling;
-        if(targetMonths.includes(dateStr)) {
+        if (header.dataset.date === latestDate) {
             header.classList.add('open');
             content.style.maxHeight = content.scrollHeight + 'px';
         }
+
+        // 3. Accordion toggle logic for user clicks
         header.addEventListener('click', function() {
             this.classList.toggle('open');
-            if(this.classList.contains('open')) {
+            if (this.classList.contains('open')) {
                 content.style.maxHeight = content.scrollHeight + 'px';
             } else {
                 content.style.maxHeight = null;
@@ -170,10 +172,10 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Auto-scroll to the anchor if the URL has a hash
-    if(window.location.hash) {
+    // 4. Auto-scroll to the anchor if the URL has a hash
+    if (window.location.hash) {
         const target = document.querySelector(window.location.hash);
-        if(target) {
+        if (target) {
             setTimeout(() => {
                 target.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }, 500); // 500ms delay to wait for the accordion to render
