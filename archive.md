@@ -21,7 +21,6 @@ permalink: /archive.html
                 <div class="month-content">
                     <ul class="archive-list">
                         {% for post in month.items %}
-                        <!-- FIXED PART INDEX: Calculate based on the sorted series list -->
                         {% if post.series %}
                             {% assign series_posts = site.posts | where: "series", post.series | sort: "date" %}
                             {% for sp in series_posts %}
@@ -45,10 +44,9 @@ permalink: /archive.html
         {% endfor %}
     </div>
 
-    <!-- RIGHT COLUMN: Stories, Novels, Poetry & Categories -->
+    <!-- RIGHT COLUMN -->
     <div class="archive-categories" style="display: flex; flex-wrap: wrap; gap: 2rem; padding: 0; background: transparent; border: none; border-radius: 0;">
         
-        <!-- 1. STORIES & NOVELS HUB (UPDATED WITH ANCHOR ID) -->
         <div class="archive-card story-hub" style="flex: 1 1 280px; min-width: 240px;">
             <h2 class="archive-section-title" style="margin-bottom: 1rem;"><i class="fas fa-book-open"></i> Stories & Novels</h2>
             {% assign series_map = site.posts | group_by_exp:"post", "post.series" %}
@@ -56,14 +54,12 @@ permalink: /archive.html
             {% for series in series_map %}
                 {% if series.name != "" and series.name != nil %}
                     {% assign has_series = true %}
-                    <!-- Added ID here to create a clickable anchor target -->
                     <div class="story-series" id="{{ series.name | slugify }}">
                         <div class="series-header">
                             <span class="series-title">{{ series.name }}</span>
                             <span class="series-count">({{ series.items.size }} parts)</span>
                         </div>
                         <ul class="series-parts">
-                            <!-- SORTED BY DATE: Ensures Part 1 is always at the top -->
                             {% assign sorted_parts = series.items | sort: "date" %}
                             {% for post in sorted_parts %}
                             <li>
@@ -85,7 +81,6 @@ permalink: /archive.html
             {% endif %}
         </div>
 
-        <!-- 2. POETRY HUB -->
         <div class="archive-card" style="flex: 1 1 280px; min-width: 240px;">
             <h2 class="archive-section-title" style="margin-bottom: 1rem;"><i class="fas fa-feather"></i> Poetry</h2>
             {% assign poems = site.categories.Poetry %}
@@ -104,7 +99,6 @@ permalink: /archive.html
             {% endif %}
         </div>
 
-        <!-- 3. CATEGORY FOLDERS (UPDATED LINK TO ANCHOR) -->
         <div class="archive-card" style="flex: 1 1 280px; min-width: 240px;">
             <h2 class="archive-section-title" style="margin-bottom: 1rem;"><i class="fas fa-folder-open"></i> By Category</h2>
             {% if site.categories %}
@@ -122,7 +116,6 @@ permalink: /archive.html
                                 {% if post.series %}
                                     {% unless displayed_series contains post.series %}
                                         {% assign displayed_series = displayed_series | append: "|" | append: post.series %}
-                                        <!-- Changed URL to point to the anchor ID -->
                                         <li><a href="#{{ post.series | slugify }}">{{ post.series }}</a></li>
                                     {% endunless %}
                                 {% else %}
@@ -144,7 +137,7 @@ permalink: /archive.html
 document.addEventListener('DOMContentLoaded', function() {
     const headers = document.querySelectorAll('.month-header');
     
-    // 1. Find the latest month header by comparing data-date attributes
+    // 1. Find the latest month header
     let latestDate = '';
     headers.forEach(header => {
         const dateStr = header.dataset.date;
@@ -153,32 +146,36 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // 2. Open only the latest month (others stay closed)
-    headers.forEach(header => {
-        const content = header.nextElementSibling;
-        if (header.dataset.date === latestDate) {
-            header.classList.add('open');
-            content.style.maxHeight = content.scrollHeight + 'px';
-        }
-
-        // 3. Accordion toggle logic for user clicks
-        header.addEventListener('click', function() {
-            this.classList.toggle('open');
-            if (this.classList.contains('open')) {
+    // 2. CRITICAL FIX: Use setTimeout to let mobile browsers calculate layout first
+    setTimeout(() => {
+        headers.forEach(header => {
+            const content = header.nextElementSibling;
+            if (header.dataset.date === latestDate) {
+                header.classList.add('open');
+                // Ensure smooth slide animation by relying on CSS transition
                 content.style.maxHeight = content.scrollHeight + 'px';
-            } else {
-                content.style.maxHeight = null;
             }
-        });
-    });
 
-    // 4. Auto-scroll to the anchor if the URL has a hash
+            // 3. Accordion toggle for touch/click
+            header.addEventListener('click', function() {
+                const content = this.nextElementSibling;
+                this.classList.toggle('open');
+                if (this.classList.contains('open')) {
+                    content.style.maxHeight = content.scrollHeight + 'px';
+                } else {
+                    content.style.maxHeight = null;
+                }
+            });
+        });
+    }, 150); // 150ms delay guarantees animation works on Safari/iOS
+
+    // 4. Auto-scroll to anchor
     if (window.location.hash) {
         const target = document.querySelector(window.location.hash);
         if (target) {
             setTimeout(() => {
                 target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }, 500); // 500ms delay to wait for the accordion to render
+            }, 500);
         }
     }
 });
