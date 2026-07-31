@@ -21,16 +21,17 @@ permalink: /archive.html
                 <div class="month-content">
                     <ul class="archive-list">
                         {% for post in month.items %}
-                        {% assign part_index = 0 %}
+                        <!-- FIXED PART INDEX: Calculate based on the sorted series list -->
                         {% if post.series %}
-                            {% for sp in site.posts %}
-                                {% if sp.series == post.series %}
-                                    {% if sp.url == post.url %}
-                                        {% assign part_index = forloop.index0 %}
-                                        {% break %}
-                                    {% endif %}
+                            {% assign series_posts = site.posts | where: "series", post.series | sort: "date" %}
+                            {% for sp in series_posts %}
+                                {% if sp.url == post.url %}
+                                    {% assign part_index = forloop.index0 %}
+                                    {% break %}
                                 {% endif %}
                             {% endfor %}
+                        {% else %}
+                            {% assign part_index = 0 %}
                         {% endif %}
                         <li>
                             <a href="{{ post.url }}">{{ post.title }}{% if post.series %} (Part {{ part_index | plus: 1 }}){% endif %}</a>
