@@ -59,10 +59,10 @@
         .media-row { display: flex; gap: 15px; flex-wrap: wrap; margin-top: 10px; }
         .media-row > div { flex: 1; min-width: 150px; }
         .upload-status { margin-top: 12px; font-size: 0.9rem; font-weight: 500; }
-        
         .featured-checkbox-wrap { margin-top: 15px; display: flex; align-items: center; gap: 8px; }
         .featured-checkbox-wrap input[type="checkbox"] { width: 20px; height: 20px; min-height: auto; padding: 0; margin: 0; cursor: pointer; accent-color: #a82e1d; }
-
+        /* Featured Image Preview */
+        #featured-image-preview { margin-top: 10px; display: none; max-width: 100%; max-height: 200px; border-radius: 12px; border: 1px solid #e2e8f0; padding: 4px; background: #fafafa; }
         @media (max-width: 900px) {
             .editor-page-wrapper { flex-direction: column; }
             .editor-sidebar-area { width: 100%; margin-top: 1rem; }
@@ -88,7 +88,20 @@
                 </div>
                 <div class="row">
                     <div><label for="datetime">Date & Time</label><input type="datetime-local" id="datetime"></div>
-                    <div><label for="categories">Categories (Add multiple separated by commas)</label><input type="text" id="categories" placeholder="Tech, Life, Thoughts"></div>
+                    <div>
+                        <label for="categories">Categories</label>
+                        <input type="text" id="categories" placeholder="Tech, Life, Thoughts" list="category-list">
+                        <datalist id="category-list">
+                            <option value="Novel">
+                            <option value="Poetry">
+                            <option value="Tech">
+                            <option value="Life">
+                            <option value="Philosophy">
+                            <option value="Culture">
+                            <option value="Story">
+                            <option value="Education">
+                        </datalist>
+                    </div>
                 </div>
                 
                 <!-- SERIES, CHAPTER, BADGE & PINNED SETTINGS -->
@@ -133,6 +146,8 @@
                     <div style="margin-top: 18px;">
                         <label for="featured_image">Featured Image URL (Placed under the title)</label>
                         <input type="url" id="featured_image" placeholder="https://example.com/image.jpg">
+                        <!-- Live preview of the featured image -->
+                        <img id="featured-image-preview" src="" alt="Featured Image Preview">
                     </div>
                 </div>
                 <div class="seo-card" style="margin-top:15px;">
@@ -206,6 +221,7 @@
         const suggestionContainer = document.getElementById('suggestionContainer');
         const addExampleBtn = document.getElementById('addExampleTags');
         const seoImageInput = document.getElementById('featured_image');
+        const featuredImagePreview = document.getElementById('featured-image-preview');
         const additionalFileInput = document.getElementById('additional_file');
         const referencesInput = document.getElementById('references_input');
         const fileInput = document.getElementById('fileInput');
@@ -235,12 +251,22 @@
         const savedToken = localStorage.getItem('github_blog_token');
         if(savedToken) tokenInput.value = savedToken;
 
+        // --- BULLETPROOF SLUG GENERATOR (supports Bangla & any language) ---
         function generateSlug(text) {
-            return text.toLowerCase()
+            let slug = text
+                .toLowerCase()
+                // Keep only a-z, 0-9, spaces, and dashes (strip everything else)
                 .replace(/[^a-z0-9\s-]/g, '')
                 .trim()
                 .replace(/\s+/g, '-')
                 .replace(/-+/g, '-');
+            // If slug is empty (e.g., pure Bangla), use a timestamp-based fallback
+            if (!slug) {
+                const now = new Date();
+                const dateStr = now.toISOString().split('T')[0].replace(/-/g, '');
+                slug = `post-${dateStr}`;
+            }
+            return slug;
         }
         let isAutoSlugging = true;
         titleInput.addEventListener('input', () => {
@@ -250,6 +276,17 @@
         });
         slugInput.addEventListener('input', () => {
             isAutoSlugging = false;
+        });
+
+        // --- Live Featured Image Preview ---
+        seoImageInput.addEventListener('input', function() {
+            const url = this.value.trim();
+            if (url && (url.match(/\.(jpg|jpeg|png|gif|webp|svg)$/i) || url.startsWith('http'))) {
+                featuredImagePreview.src = url;
+                featuredImagePreview.style.display = 'block';
+            } else {
+                featuredImagePreview.style.display = 'none';
+            }
         });
 
         seoDescInput.addEventListener('input', () => { descCount.textContent = seoDescInput.value.length; });
@@ -342,12 +379,13 @@
                         
                         const isFeatured = setAsFeaturedCheck.checked;
 
-                        // --- CRITICAL FIX: When "Set as Featured" is checked, DO NOT insert text into editor ---
                         if(mime.startsWith('image/')) {
                             insertText = `<figure class="media-figure"><div class="media-wrapper"><img src="${publicUrl}" alt="${altText}" title="${altText}"></div>${captionHTML}</figure>`;
                             if(isFeatured) {
-                                // Only fill the URL box, no insertion into the editor
                                 seoImageInput.value = publicUrl;
+                                // Trigger preview update
+                                featuredImagePreview.src = publicUrl;
+                                featuredImagePreview.style.display = 'block';
                                 uploadStatus.innerHTML = `✅ Set as Featured Image! <a href="${publicUrl}" target="_blank">View File</a> (Will appear under the title)`;
                             } else {
                                 const cursorPos = easyMDE.codemirror.getCursor();
@@ -356,7 +394,6 @@
                         } else if(mime.startsWith('video/')) {
                             insertText = `<figure class="media-figure"><div class="media-wrapper"><video src="${publicUrl}" controls title="${altText}"></video></div>${captionHTML}</figure>`;
                             if(isFeatured) {
-                                // Only fill the URL box, no insertion into the editor
                                 seoImageInput.value = publicUrl;
                                 uploadStatus.innerHTML = `✅ Set as Featured Video! <a href="${publicUrl}" target="_blank">View File</a> (Will appear under the title)`;
                             } else {
@@ -393,13 +430,11 @@
                         const slug = file.name.replace('.md', '');
                         li.innerText = slug;
                         li.onclick = () => { loadSlugInput.value = file.name; loadBtn.click(); };
-                        
                         const countSpan = document.createElement('span');
                         countSpan.className = 'views-count';
                         countSpan.innerText = '(views: -)';
                         li.appendChild(countSpan);
                         postList.appendChild(li);
-
                         try {
                             const countRes = await fetch(`https://api.countapi.xyz/get/abdullahbinfahad_writings/${slug}`);
                             if(countRes.ok) {
@@ -465,6 +500,13 @@
                 const loadedTags = getMeta('keywords').trim();
                 if(loadedTags) { tags = loadedTags.split(',').map(t => t.trim().toLowerCase()); updateTagUI(); } else { tags = []; updateTagUI(); }
                 seoImageInput.value = getMeta('image').trim();
+                // Update preview if image exists
+                if (seoImageInput.value) {
+                    featuredImagePreview.src = seoImageInput.value;
+                    featuredImagePreview.style.display = 'block';
+                } else {
+                    featuredImagePreview.style.display = 'none';
+                }
                 easyMDE.value(body);
                 updateWordCount();
 
@@ -477,7 +519,7 @@
         saveBtn.addEventListener('click', async () => {
             const token = saveToken();
             const title = titleInput.value.trim();
-            const slug = slugInput.value.trim() || generateSlug(title);
+            const slug = slugInput.value.trim() || generateSlug(title) || 'post';
             const date = dateInput.value;
             const categories = catInput.value.trim().split(',').map(c => c.trim()).filter(c => c);
             const seriesName = seriesNameInput.value.trim();
@@ -496,21 +538,18 @@
                 statusEl.innerText = 'Error: Token, Title, Date, and Content required.'; statusEl.className = 'error'; return;
             }
 
-            // Prevent slug collision (THE FIX FOR OVERWRITING PARTS)
             let finalSlug = slug;
             let finalFilename = `_posts/${date.split('T')[0]}-${finalSlug}.md`;
             finalFilename = finalFilename.replace('_posts/_posts/', '_posts/');
             if (!finalFilename.startsWith('_posts/')) finalFilename = `_posts/${finalFilename}`;
 
             let counter = 2;
-            // Only check for collision if it's a new post
             if (!currentPostSha) {
                 let fileExists = true;
-                while(fileExists && counter < 20) { // Safety cap at 20
+                while(fileExists && counter < 20) {
                     try {
                         const checkRes = await fetch(`https://api.github.com/repos/abdullahbinfahad/writings/contents/${finalFilename}`, { headers: { 'Authorization': `token ${token}` } });
                         if (checkRes.status === 200) {
-                            // Slug collides, increment
                             finalSlug = `${slug}-${counter}`;
                             finalFilename = `_posts/${date.split('T')[0]}-${finalSlug}.md`;
                             finalFilename = finalFilename.replace('_posts/_posts/', '_posts/');
@@ -519,10 +558,9 @@
                             fileExists = false;
                         }
                     } catch(e) {
-                        fileExists = false; // If fetch fails, assume it's free
+                        fileExists = false;
                     }
                 }
-                // Update the slug input field so the user sees what it changed to
                 if (finalSlug !== slug) {
                     slugInput.value = finalSlug;
                 }
@@ -564,12 +602,12 @@
                 if(res.ok) {
                     statusEl.innerHTML = `✅ Success! <a href="https://posts.abdullahbinfahad.info" target="_blank">View Blog</a>`;
                     statusEl.className = 'success';
-                    // Full Reset
                     titleInput.value = ''; easyMDE.value(''); catInput.value = ''; seriesNameInput.value = '';
                     chapterNameInput.value = ''; badgeInput.value = '';
                     authorInput.value = 'ABDULLAH BIN FAHAD'; pinnedInput.checked = false;
                     seoDescInput.value = ''; descCount.textContent = '0'; tags = []; updateTagUI();
-                    seoImageInput.value = ''; additionalFileInput.value = ''; referencesInput.value = '';
+                    seoImageInput.value = ''; featuredImagePreview.style.display = 'none';
+                    additionalFileInput.value = ''; referencesInput.value = '';
                     mediaAlt.value = ''; mediaCaption.value = ''; uploadFileName.value = ''; fileInput.value = '';
                     uploadStatus.innerHTML = '';
                     slugInput.value = ''; isAutoSlugging = true;
