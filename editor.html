@@ -113,7 +113,7 @@
                     <div><label for="chapter_name">Part / Chapter Name</label><input type="text" id="chapter_name" placeholder="e.g. Part 1: The Beginning"></div>
                 </div>
                 <div class="row">
-                    <div><label for="badge_name">Badge Label (e.g., New, Hot, Important, Exclusive)</label><input type="text" id="badge_name" placeholder="New, Hot, Important..."></div>
+                    <div><label for="badge_name">Badge Label (e.g., Hot, Important, Exclusive)</label><input type="text" id="badge_name" placeholder="Hot, Important, Exclusive... (New is auto-applied)"></div>
                     <div style="display:flex; align-items:center; gap:10px; margin-top:25px;">
                         <label for="pinned_post" style="margin:0; cursor:pointer;">📌 Pin this Post?</label>
                         <input type="checkbox" id="pinned_post" style="width:20px; height:20px; min-height:auto; padding:0; cursor:pointer;">
@@ -627,7 +627,11 @@
                 catInput.value = cats.startsWith('[') ? cats.replace(/[\[\]"]/g, '') : cats;
                 seriesNameInput.value = getMeta('series').trim();
                 chapterNameInput.value = getMeta('chapter_name').trim();
-                badgeInput.value = getMeta('badge').trim();
+                
+                // --- FIX: Strip quotes from Badge and Image inputs ---
+                badgeInput.value = getMeta('badge').replace(/^["']|["']$/g, '').trim();
+                seoImageInput.value = getMeta('image').replace(/^["']|["']$/g, '').trim();
+                
                 authorInput.value = getMeta('author').trim();
                 pinnedInput.checked = getMeta('pinned').trim() === 'true';
                 additionalFileInput.value = getMeta('additional_file').trim();
@@ -636,7 +640,7 @@
                 seoDescInput.value = getMeta('description').trim(); descCount.textContent = seoDescInput.value.length;
                 const loadedTags = getMeta('keywords').trim();
                 if(loadedTags) { tags = loadedTags.split(',').map(t => t.trim().toLowerCase()); updateTagUI(); } else { tags = []; updateTagUI(); }
-                seoImageInput.value = getMeta('image').trim();
+                
                 // Update preview if image exists
                 if (seoImageInput.value) {
                     featuredImagePreview.src = seoImageInput.value;
@@ -708,7 +712,7 @@
             let fileContent = `---\nlayout: post\ntitle: "${title.replace(/"/g, '\\"')}"\ndate: ${jekyllDate}\ncategories: [${categories.map(c => `"${c}"`).join(', ')}]\n`;
             if(seriesName) fileContent += `series: "${seriesName.replace(/"/g, '\\"')}"\n`;
             if(chapterName) fileContent += `chapter_name: "${chapterName.replace(/"/g, '\\"')}"\n`;
-            if(badge) fileContent += `badge: "${badge.replace(/"/g, '\\"')}"\n`;
+            if(badge && badge.toLowerCase() !== 'new') fileContent += `badge: "${badge.replace(/"/g, '\\"')}"\n`;
             if(author) fileContent += `author: "${author.replace(/"/g, '\\"')}"\n`;
             if(pinned) fileContent += `pinned: true\n`;
             if(description) fileContent += `description: "${description.replace(/"/g, '\\"')}"\n`;
