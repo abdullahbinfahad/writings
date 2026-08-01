@@ -30,8 +30,18 @@ layout: default
             
             <div class="post-card {% if post.pinned %}pinned{% endif %}" data-categories="{{ post.categories | join: ',' | downcase }}">
                 <div class="card-content">
-                    <!-- NEW BADGE WRAPPER -->
+                    <!-- BADGE WRAPPER WITH AUTO "NEW" LOGIC -->
                     <div class="badge-wrapper" style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 0.5rem;">
+                        
+                        <!-- AUTOMATIC "NEW" BADGE LOGIC (Less than 7 days old) -->
+                        {% assign post_date = post.date | date: '%s' %}
+                        {% assign current_date = site.time | date: '%s' %}
+                        {% assign diff_seconds = current_date | minus: post_date %}
+                        {% assign diff_days = diff_seconds | divided_by: 86400 %}
+                        {% if diff_days < 7 %}
+                        <span class="badge-label badge-new">New</span>
+                        {% endif %}
+                        
                         {% if post.pinned %}
                         <span class="badge-label badge-featured">📌 Featured</span>
                         {% endif %}
@@ -40,6 +50,7 @@ layout: default
                         <span class="badge-label badge-{{ post.badge | downcase }}">{{ post.badge }}</span>
                         {% endif %}
                     </div>
+                    <!-- END BADGE WRAPPER -->
 
                     <h2><a href="{{ post.url }}">{{ post.title }}{% if post.series %} (Part {{ part_index | plus: 1 }} of {{ total_parts }}){% endif %}</a></h2>
                     <div class="post-meta">
