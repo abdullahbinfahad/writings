@@ -158,11 +158,11 @@
                     <label for="additional_file">Image, Video, or PDF URL</label>
                     <input type="url" id="additional_file" placeholder="https://example.com/under-article-file.pdf">
                 </div>
-                <!-- PRE-FILLED REFERENCES WITH COPYRIGHT -->
+                <!-- PRE-FILLED REFERENCES WITH COPYRIGHT (FIXED AS ONE LINE) -->
                 <div class="seo-card" style="margin-top:15px;">
                     <h3>📚 References & Links</h3>
                     <label for="references_input">References (One per line)</label>
-                    <textarea id="references_input" rows="4" placeholder="https://example.com/ref1&#10;https://example.com/ref2&#10;Book Title, Page 12" style="width:100%; padding:12px; border:1px solid #d1d5db; border-radius:10px; font-family:inherit; resize:vertical;">© 2026 Abdullah Bin Fahad. All ideas, analyses, information, and creative contents are the author's original intellectual property. All rights reserved. Unauthorized reproduction or distribution is prohibited.&#10;</textarea>
+                    <textarea id="references_input" rows="4" placeholder="https://example.com/ref1&#10;https://example.com/ref2&#10;Book Title, Page 12" style="width:100%; padding:12px; border:1px solid #d1d5db; border-radius:10px; font-family:inherit; resize:vertical;">© 2026 Abdullah Bin Fahad. All ideas, analyses, information, and creative contents are the author's original intellectual property. All rights reserved. Unauthorized reproduction or distribution is prohibited.</textarea>
                 </div>
                 <div class="media-card">
                     <h3>📤 Upload Media & SEO</h3>
@@ -749,8 +749,8 @@
                     seoDescInput.value = ''; descCount.textContent = '0'; tags = []; updateTagUI();
                     seoImageInput.value = ''; featuredImagePreview.style.display = 'none';
                     additionalFileInput.value = ''; 
-                    // Reset references to default copyright when publishing new posts
-                    referencesInput.value = "© 2026 Abdullah Bin Fahad. All ideas, analyses, information, and creative contents are the author's original intellectual property. All rights reserved. Unauthorized reproduction or distribution is prohibited.\n";
+                    // FIXED: Removed the \n that was causing the reference line break
+                    referencesInput.value = "© 2026 Abdullah Bin Fahad. All ideas, analyses, information, and creative contents are the author's original intellectual property. All rights reserved. Unauthorized reproduction or distribution is prohibited.";
                     mediaAlt.value = ''; mediaCaption.value = ''; uploadFileName.value = ''; fileInput.value = '';
                     uploadStatus.innerHTML = '';
                     slugInput.value = ''; isAutoSlugging = true;
