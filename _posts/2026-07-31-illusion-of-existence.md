@@ -3,10 +3,10 @@ layout: post
 title: "অস্তিত্বের ভ্রম: আপনি কি শুধুই একটি কল্পিত পরিচয়?"
 date: 2026-07-31 22:04:00 +0800
 categories: ["Personal Reflection", "Life"]
-badge: "New"
-author: "ABDULLAH BIN FAHAD"
-description: "মানুষের পরিচয়, চেতনা, আত্মা, জীবন, অস্তিত্ব, Rat Race ও স্বাধীন চিন্তা নিয়ে একটি দার্শনিক লেখা যা আপনাকে নিজেকে নতুনভাবে ভাবতে বাধ্য করবে।"
-keywords: "self improvement, critical thinking, discipline, productivity, success, growth mindset, abdullah bin fahad, life lessons, decision making, purpose, leadership, philosophy, culture, human nature, psychology, self awareness"
+author: "\"ABDULLAH BIN FAHAD\""
+description: "\"মানুষের পরিচয়, চেতনা, আত্মা, জীবন, অস্তিত্ব, Rat Race ও স্বাধীন চিন্তা নিয়ে একটি দার্শনিক লেখা যা আপনাকে নিজেকে নতুনভাবে ভাবতে বাধ্য করবে।\""
+keywords: "\"self improvement, critical thinking, discipline, productivity, success, growth mindset, abdullah bin fahad, life lessons, decision making, purpose, leadership, philosophy, culture, human nature, psychology, self awareness\""
+references: ["© 2026 Abdullah Bin Fahad. All ideas, analyses, information, and creative contents are the author's original intellectual property. All rights reserved. Unauthorized reproduction or distribution is prohibited."]
 ---
 আপনি শুধুই আপনার কল্পনা , তাছাড়া আর কিছু না । অর্থাৎ আপনি আপনাকে আপনি ভাবছেন শুধুমাত্র আপনার কল্পনার অস্তিত্বের কারণে । একই দেহ,মন,মানসিকতা,স্বভাব রেখে স্মৃতি নিয়ে গেলে আপনার আত্মার অস্তিত্বের মৃত্যু ঘটবে । তাই বলা যায় ব্যক্তি আপনার কোন শারীরিক অস্তিত্ব নাই । যা স্বাধীন এবং মুক্তচেতনাশীল । যার কোনো নির্দিষ্ট রূপ নির্ধারণ করা সম্ভব না । জীবন সৃষ্টিকর্তা কর্তৃক একটা দায়িত্বরত অবস্থা মাত্র । যেখানে আপনাকে কিছু নির্ধারিত কাজ এবং শর্ত দিয়ে আপনার জীবনকে এক এক সময় এক এক ভাবে নিজেকে এক এক রকম রকম বানিয়ে মুক্ত হয়ে পরিচালনার অধিকার দেওয়া । 
 <figure class="media-figure"><div class="media-wrapper"><img src="/assets/uploads/alone-picture.png" alt="alone-picture" title="alone-picture"></div><figcaption>সেই সভ্যতার সঙ্গে তাল মিলিয়ে চলা আবশ্যক যে সভ্যতায় ভদ্রতা বিদ্যমান !</figcaption></figure>
