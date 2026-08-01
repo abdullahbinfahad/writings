@@ -6,11 +6,10 @@
     <title>Pro Blog Editor</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;700&display=swap" rel="stylesheet">
     
-    <!-- REPLACED WITH RELIABLE CDN CSS LINK -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/easymde/2.18.0/easymde.min.css">
+    <!-- CACHE-BUSTED CDN LINK FOR CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css?v=2.0.0">
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
-    
     <style>
         body { background: #f4f6f9; font-family: 'Inter', sans-serif; display: flex; justify-content: center; padding: 20px; box-sizing: border-box; }
         .editor-page-wrapper { display: flex; gap: 2rem; max-width: 1200px; width: 100%; flex-wrap: wrap; }
@@ -227,11 +226,16 @@
         </div>
     </div>
     
-    <!-- REPLACED WITH RELIABLE CDN JS LINK -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/easymde/2.18.0/easymde.min.js"></script>
+    <!-- CACHE-BUSTED CDN LINK FOR JS -->
+    <script src="https://unpkg.com/easymde/dist/easymde.min.js?v=2.0.0"></script>
     
     <script>
-        const easyMDE = new EasyMDE({ element: document.getElementById('markdown-editor'), spellChecker: false, toolbar: ["bold", "italic", "heading", "|", "quote", "unordered-list", "ordered-list", "|", "link", "image", "table", "|", "preview", "side-by-side", "fullscreen", "|", "guide"], previewClass: "editor-preview" });
+        const easyMDE = new EasyMDE({ 
+            element: document.getElementById('markdown-editor'), 
+            spellChecker: false, 
+            toolbar: ["bold", "italic", "heading", "|", "quote", "unordered-list", "ordered-list", "|", "link", "image", "table", "|", "preview", "side-by-side", "fullscreen", "|", "guide"], 
+            previewClass: "editor-preview" 
+        });
 
         const tokenInput = document.getElementById('token');
         const titleInput = document.getElementById('title');
