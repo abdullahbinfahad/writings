@@ -1,97 +1,514 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta name="google-site-verification" content="139i8SM8HImD_WHj4C3GMQRI5ANDMpjybNgZuuw-nR8" />
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-    
-    <!-- NEW: FAVICON FOR THE BROWSER TAB -->
-    <link rel="icon" type="image/jpeg" href="/assets/uploads/abdullahbinfahad.jpg">
-    <link rel="apple-touch-icon" href="/assets/uploads/abdullahbinfahad.jpg">
-    
-    <title>{% if page.title %}{{ page.title }} | {% endif %}{{ site.title }}</title>
-    
-    <meta name="description" content="{% if page.description %}{{ page.description | strip_html | escape }}{% elsif site.description %}{{ site.description | strip_html | escape }}{% endif %}">
-    <meta name="keywords" content="{% if page.tags %}{{ page.tags | join: ', ' }}{% else %}blog, writings, articles, abdullahbinfahad, {{ site.title }}{% endif %}">
-    <meta name="robots" content="index, follow">
-    <link rel="canonical" href="{{ page.url | absolute_url }}">
-    
-    <!-- <meta name="baidu-site-verification" content="your-baidu-code-here" /> -->
-    
-    <meta property="og:type" content="{% if page.url == '/' %}website{% else %}article{% endif %}">
-    <meta property="og:title" content="{% if page.title %}{{ page.title }}{% else %}{{ site.title }}{% endif %}">
-    <meta property="og:description" content="{% if page.description %}{{ page.description | strip_html | escape }}{% elsif site.description %}{{ site.description | strip_html | escape }}{% endif %}">
-    <meta property="og:url" content="{{ page.url | absolute_url }}">
-    <meta property="og:site_name" content="{{ site.title }}">
-    <meta property="og:image" content="{% if page.image %}{{ page.image | absolute_url }}{% elsif site.default_image %}{{ site.default_image | absolute_url }}{% else %}https://posts.abdullahbinfahad.info/assets/images/default-banner.jpg{% endif %}">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
-
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="{% if page.title %}{{ page.title }}{% else %}{{ site.title }}{% endif %}">
-    <meta name="twitter:description" content="{% if page.description %}{{ page.description | strip_html | escape }}{% elsif site.description %}{{ site.description | strip_html | escape }}{% endif %}">
-    <meta name="twitter:site" content="@abdullahbinfahad">
-    <meta name="twitter:image" content="{% if page.image %}{{ page.image | absolute_url }}{% elsif site.default_image %}{{ site.default_image | absolute_url }}{% else %}https://posts.abdullahbinfahad.info/assets/images/default-banner.jpg{% endif %}">
-
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "{% if page.url == '/' %}WebSite{% else %}BlogPosting{% endif %}",
-        "name": "{{ site.title }}",
-        "url": "{{ page.url | absolute_url }}",
-        "description": "{% if page.description %}{{ page.description | strip_html | escape }}{% elsif site.description %}{{ site.description | strip_html | escape }}{% endif %}"
-        {% if page.url != '/' %}
-        ,
-        "author": {
-            "@type": "Person",
-            "name": "{% if page.author %}{{ page.author }}{% elsif site.author %}{{ site.author }}{% else %}Abdullah Bin Fahad{% endif %}"
-        },
-        "headline": "{{ page.title }}",
-        "datePublished": "{{ page.date | date_to_xmlschema }}",
-        "dateModified": "{{ page.last_modified_at | date_to_xmlschema | default: page.date | date_to_xmlschema }}",
-        "mainEntityOfPage": {
-            "@type": "WebPage",
-            "@id": "{{ page.url | absolute_url }}"
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Abdullah Bin Fahad - CV</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Reset & Base Styles */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', 'Arial', 'Helvetica', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+            font-size: 13px;
+            padding: 20px;
+            min-height: 100vh;
+            overflow: hidden; /* Prevent scroll until password is entered */
         }
-        {% endif %}
-    }
-    </script>
+        body.unlocked { overflow: auto; }
 
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Noto+Sans+SC:wght@400;700&family=Noto+Serif+Bengali:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- CRITICAL UPDATE: CACHE BUSTER ADDED TO FORCE CSS RELOAD -->
-    <link rel="stylesheet" href="/assets/css/style.css?v={{ site.time | date: '%s' }}">
+        @page { size: A4; margin: 0.5in; }
+
+        /* --- FULL SCREEN TRANSPARENT GLASS WATER OVERLAY --- */
+        #passwordOverlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            /* Light water sheen gradient */
+            background: linear-gradient(135deg, rgba(180, 230, 255, 0.15) 0%, rgba(255, 255, 255, 0.3) 100%);
+            backdrop-filter: blur(16px); /* Blurs the CV behind it */
+            -webkit-backdrop-filter: blur(16px);
+            z-index: 99999;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: opacity 0.8s ease, visibility 0.8s ease, transform 0.8s ease;
+            transform: scale(1);
+        }
+        #passwordOverlay.hidden { 
+            opacity: 0; 
+            visibility: hidden; 
+            pointer-events: none; 
+            transform: scale(1.1); /* Zoom-out dissolve effect */
+        }
+
+        /* Water Blobs (Abstract moving water bubbles) */
+        .blob {
+            position: absolute; z-index: 1; pointer-events: none;
+            background: radial-gradient(circle, rgba(0, 200, 255, 0.15), transparent 70%);
+            filter: blur(20px);
+            animation: floatBlob 12s ease-in-out infinite alternate;
+        }
+        .blob-1 { width: 400px; height: 400px; top: -10%; left: -10%; animation-duration: 14s; }
+        .blob-2 { width: 600px; height: 500px; bottom: 0%; right: 0%; background: radial-gradient(circle, rgba(100, 210, 255, 0.12), transparent 70%); animation-duration: 18s; animation-delay: 2s; }
+        .blob-3 { width: 300px; height: 400px; top: 40%; left: 50%; background: radial-gradient(circle, rgba(0, 150, 255, 0.1), transparent 70%); animation-duration: 10s; animation-delay: 4s; border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; }
+        
+        @keyframes floatBlob {
+            0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+            33% { transform: translate(60px, -30px) scale(1.1) rotate(10deg); }
+            66% { transform: translate(-40px, 40px) scale(0.9) rotate(-10deg); }
+            100% { transform: translate(20px, -20px) scale(1.2) rotate(20deg); }
+        }
+
+        /* Tiny Rising Bubbles */
+        .bubble-container { position: absolute; width: 100%; height: 100%; overflow: hidden; z-index: 2; pointer-events: none; }
+        .bubble {
+            position: absolute; bottom: -50px; border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            animation: riseBubble linear infinite;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+        }
+        .bubble-1 { width: 40px; height: 40px; left: 10%; animation-duration: 8s; animation-delay: 1s; }
+        .bubble-2 { width: 15px; height: 15px; left: 20%; animation-duration: 6s; animation-delay: 3s; }
+        .bubble-3 { width: 25px; height: 25px; left: 40%; animation-duration: 9s; animation-delay: 0s; }
+        .bubble-4 { width: 50px; height: 50px; left: 60%; animation-duration: 12s; animation-delay: 2s; }
+        .bubble-5 { width: 12px; height: 12px; left: 80%; animation-duration: 7s; animation-delay: 4s; }
+        .bubble-6 { width: 30px; height: 30px; left: 90%; animation-duration: 10s; animation-delay: 5s; }
+        
+        @keyframes riseBubble {
+            0% { transform: translateY(0) scale(0.5); opacity: 0; }
+            20% { opacity: 1; }
+            100% { transform: translateY(-110vh) scale(1.2); opacity: 0; }
+        }
+
+        /* Glass Password Card */
+        .glass-card {
+            position: relative; z-index: 10;
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            border-radius: 24px;
+            padding: 40px;
+            width: 90%; max-width: 420px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 50, 100, 0.2);
+            animation: fadeInUp 0.8s ease-out;
+            display: flex; flex-direction: column; align-items: center; gap: 20px;
+        }
+        /* Inner water glow */
+        .glass-card::before {
+            content: '';
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(180deg, rgba(255,255,255,0.8) 0%, transparent 40%, transparent 60%, rgba(100, 200, 255, 0.2) 100%);
+            border-radius: 24px; pointer-events: none; z-index: -1;
+        }
+        .glass-card .lock-icon { font-size: 3rem; color: #2c3e50; margin-bottom: 5px; text-shadow: 0 2px 10px rgba(255,255,255,0.5); }
+        .glass-card h2 { color: #1a2a3a; font-weight: 600; margin-bottom: 5px; }
+        .glass-card p { color: #34495e; font-size: 0.95rem; margin-bottom: 10px; }
+        
+        .glass-card input {
+            width: 100%; padding: 14px 18px; border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 12px; font-size: 1rem; outline: none; background: rgba(255, 255, 255, 0.4);
+            color: #1a2a3a; backdrop-filter: blur(4px); transition: 0.3s;
+        }
+        .glass-card input::placeholder { color: rgba(44, 62, 80, 0.5); }
+        .glass-card input:focus { border-color: rgba(255, 255, 255, 1); box-shadow: 0 0 15px rgba(255, 255, 255, 0.5); }
+        
+        .glass-card button {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            color: #1a2a3a; padding: 14px; border-radius: 12px;
+            font-weight: bold; font-size: 1rem; cursor: pointer; transition: 0.3s; backdrop-filter: blur(4px);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .glass-card button:hover {
+            background: rgba(255, 255, 255, 0.8);
+            transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0, 50, 100, 0.15);
+        }
+
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(40px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+
+        /* Main CV Wrapper */
+        .lang-wrapper {
+            display: none;
+            max-width: 210mm;
+            min-height: 297mm;
+            margin: 20px auto;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            position: relative;
+            animation: fadeIn 1s ease-out;
+        }
+        .lang-wrapper.active { display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .cv-container { display: flex; width: 100%; position: relative; }
+
+        /* Floating Buttons */
+        .action-button {
+            position: fixed; padding: 10px 20px; border: none; border-radius: 50px; cursor: pointer;
+            font-size: 14px; transition: all 0.3s ease; z-index: 100; display: flex; align-items: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        .lang-toggle-button { bottom: 20px; left: 20px; background: #3498db; color: white; }
+        .lang-toggle-button:hover { background: #2980b9; transform: translateY(-3px); }
+        .print-button { bottom: 20px; right: 20px; background: #c03; color: white; }
+        .print-button:hover { background: #a00; transform: translateY(-3px); }
+        .action-button i { margin-right: 8px; }
+
+        @media print { .action-button { display: none !important; } body { background: white; padding: 0; overflow: visible; } }
+
+        /* Decorative Elements */
+        .decoration-element { position: absolute; z-index: 0; opacity: 0.05; font-size: 90px; color: #c03; font-family: 'Times New Roman', serif; }
+        .decoration-top-left { top: 15px; left: 15px; transform: rotate(-15deg); }
+        .decoration-top-right { top: 15px; right: 15px; transform: rotate(15deg); }
+        .decoration-bottom-left { bottom: 15px; left: 15px; transform: rotate(15deg); }
+        .decoration-bottom-right { bottom: 15px; right: 15px; transform: rotate(-15deg); }
+        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }
+        .floating-element { position: absolute; z-index: 0; animation: float 6s ease-in-out infinite; opacity: 0.1; font-size: 36px; color: #c03; }
+        .element-1 { top: 10%; left: 5%; animation-delay: 0s; }
+        .element-2 { top: 25%; right: 5%; animation-delay: 1s; }
+        .element-3 { bottom: 15%; left: 10%; animation-delay: 2s; }
+        .element-4 { bottom: 30%; right: 15%; animation-delay: 3s; }
+
+        /* Sidebar */
+        .sidebar { width: 35%; background: linear-gradient(to bottom, #f8f9fa, #e9ecef); padding: 25px 20px; border-right: 1px solid #e0e0e0; position: relative; z-index: 1; }
+        .profile-section { text-align: center; margin-bottom: 25px; }
+        .profile-image { width: 120px; height: 120px; border-radius: 50%; margin: 0 auto 12px; overflow: hidden; border: 3px solid white; box-shadow: 0 5px 15px rgba(0,0,0,0.2); transition: transform 0.5s ease; }
+        .profile-image:hover { transform: scale(1.05); }
+        .profile-image img { width: 100%; height: 100%; object-fit: cover; }
+        .name { font-size: 20px; font-weight: bold; color: #2c3e50; margin-bottom: 5px; letter-spacing: 1px; position: relative; display: inline-block; }
+        .name::after { content: ""; position: absolute; bottom: -5px; left: 0; width: 100%; height: 2px; background: #c03; transform: scaleX(0); transform-origin: right; transition: transform 0.3s ease; }
+        .name:hover::after { transform: scaleX(1); transform-origin: left; }
+        .title { font-size: 13px; color: #7f8c8d; font-style: italic; margin-top: 5px; }
+        
+        .sidebar-section { margin-bottom: 20px; }
+        .sidebar-section h3 { font-size: 15px; font-weight: bold; color: #2c3e50; margin-bottom: 12px; letter-spacing: 0.5px; padding-bottom: 6px; border-bottom: 2px solid #c03; display: flex; align-items: center; }
+        .sidebar-section h3 i { margin-right: 8px; color: #c03; }
+
+        .contact-item { margin-bottom: 8px; font-size: 12px; display: flex; align-items: flex-start; gap: 8px; }
+        .contact-label { font-weight: bold; color: #34495e; min-width: 60px; }
+        .contact-value { color: #555; word-break: break-word; }
+        .personal-item { margin-bottom: 7px; font-size: 12px; display: flex; justify-content: space-between; }
+        .personal-label { font-weight: bold; color: #34495e; }
+        .personal-value { color: #555; }
+
+        /* Skills & Languages */
+        .skill-item { margin-bottom: 8px; }
+        .skill-name { font-size: 12px; font-weight: bold; color: #34495e; margin-bottom: 4px; display: flex; justify-content: space-between; }
+        .skill-level { height: 7px; background: #ecf0f1; border-radius: 4px; overflow: hidden; }
+        .skill-progress { height: 100%; background: linear-gradient(to right, #c03, #f36); border-radius: 4px; animation: progressBar 1.5s ease-out forwards; }
+        @keyframes progressBar { 0% { width: 0; } }
+        
+        .language-item { margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; }
+        .language-name { font-weight: bold; color: #34495e; }
+        .language-level { background: linear-gradient(to right, #c03, #f36); color: white; padding: 2px 8px; border-radius: 12px; font-size: 10px; }
+
+        /* Main Content */
+        .main-content { width: 65%; padding: 25px 20px; position: relative; z-index: 1; }
+        .main-section { margin-bottom: 25px; }
+        .main-section h2 { font-size: 16px; font-weight: bold; color: #2c3e50; margin-bottom: 18px; letter-spacing: 1px; padding-bottom: 6px; border-bottom: 2px solid #c03; display: flex; align-items: center; }
+        .main-section h2 i { margin-right: 8px; color: #c03; }
+
+        /* Education & Achievements */
+        .education-item { margin-bottom: 20px; padding-bottom: 18px; border-bottom: 1px solid #ecf0f1; position: relative; padding-left: 18px; }
+        .education-item:last-child { border-bottom: none; }
+        .education-item::before { content: ""; position: absolute; left: 0; top: 5px; width: 10px; height: 10px; border-radius: 50%; background: #c03; }
+        .education-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
+        .education-degree { font-size: 14px; font-weight: bold; color: #2c3e50; }
+        .education-date { font-size: 12px; color: #7f8c8d; font-style: italic; background: #f8f9fa; padding: 2px 6px; border-radius: 4px; }
+        .education-institution { font-size: 13px; color: #c03; margin-bottom: 4px; font-weight: 600; }
+        .education-result { font-size: 12px; color: #27ae60; font-weight: bold; margin-bottom: 6px; padding: 2px 6px; background: rgba(39, 174, 96, 0.1); border-radius: 4px; display: inline-block; }
+        .education-subjects { font-size: 11px; color: #555; line-height: 1.6; margin-top: 8px; }
+
+        .achievement-item { margin-bottom: 20px; padding-bottom: 18px; border-bottom: 1px solid #ecf0f1; position: relative; padding-left: 18px; }
+        .achievement-item:last-child { border-bottom: none; }
+        .achievement-item::before { content: ""; position: absolute; left: 0; top: 5px; width: 10px; height: 10px; border: 2px solid #c03; border-radius: 50%; }
+        .achievement-title { font-size: 14px; font-weight: bold; color: #2c3e50; }
+        .achievement-desc { font-size: 12px; color: #555; line-height: 1.6; }
+
+        .stats-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 15px; margin-top: 10px; text-align: center; }
+        .stat-block { background: #f8f9fa; padding: 10px 5px; border-radius: 8px; border: 1px solid #ecf0f1; }
+        .stat-number { font-size: 18px; font-weight: bold; color: #c03; }
+        .stat-label { font-size: 10px; color: #7f8c8d; margin-top: 2px; }
+
+        .footer { text-align: center; padding: 12px; color: #7f8c8d; font-size: 11px; background: #f8f9fa; border-top: 1px solid #e9ecef; margin-top: 15px; }
+        
+        @media (max-width: 768px) { .cv-container { flex-direction: column; } .sidebar { width: 100%; } .main-content { width: 100%; } }
+        @media print { .cv-container { flex-direction: row; } .sidebar { width: 35%; } .main-content { width: 65%; } .main-section { page-break-inside: avoid; } }
+    </style>
 </head>
 <body>
-    <div class="blog-wrapper">
-        <header class="blog-header">
-            <div class="container header-container">
-                <div class="header-inner">
-                    <!-- UPDATED: Visible image removed, only text remains -->
-                    <h1 class="site-title">
-                        <a href="https://abdullahbinfahad.info" style="display: flex; align-items: center; gap: 8px; text-decoration: none;">
-                            <span class="site-text">{{ site.title }}</span>
-                        </a>
-                    </h1>
-                    <nav class="site-nav">
-                        <a href="{{ site.url }}">Home</a>
-                        <a href="/archive.html">Archive</a>
-                    </nav>
+    
+    <!-- FULL SCREEN TRANSPARENT GLASS WATER OVERLAY -->
+    <div id="passwordOverlay">
+        <!-- Animated Water Blobs -->
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+        
+        <!-- Tiny Rising Bubbles -->
+        <div class="bubble-container">
+            <div class="bubble bubble-1"></div>
+            <div class="bubble bubble-2"></div>
+            <div class="bubble bubble-3"></div>
+            <div class="bubble bubble-4"></div>
+            <div class="bubble bubble-5"></div>
+            <div class="bubble bubble-6"></div>
+        </div>
+
+        <!-- Glass Card -->
+        <div class="glass-card">
+            <div class="lock-icon"><i class="fas fa-lock"></i></div>
+            <h2>Protected Page</h2>
+            <p>Enter the password to view My CV.</p>
+            <div style="display: flex; flex-direction: column; gap: 15px; width: 100%;">
+                <input type="password" id="passwordInput" placeholder="Enter password...">
+                <button onclick="checkPassword()">Unlock</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Buttons -->
+    <button class="action-button print-button" onclick="window.print()">
+        <i class="fas fa-print"></i> Print CV
+    </button>
+    
+    <button class="action-button lang-toggle-button" id="langToggle" onclick="toggleLanguage()">
+        <i class="fas fa-language"></i> <span id="langBtnText">中文版</span>
+    </button>
+
+    <!-- ================= ENGLISH VERSION ================= -->
+    <div id="lang-en" class="lang-wrapper active">
+        <div class="cv-container">
+            <div class="decoration-element decoration-top-left">♔</div>
+            <div class="decoration-element decoration-top-right">♔</div>
+            <div class="decoration-element decoration-bottom-left">♔</div>
+            <div class="decoration-element decoration-bottom-right">♔</div>
+            <div class="floating-element element-1">🎓</div>
+            <div class="floating-element element-2">⚡</div>
+            <div class="floating-element element-3">🧠</div>
+            <div class="floating-element element-4">🌍</div>
+
+            <div class="sidebar">
+                <div class="profile-section">
+                    <div class="profile-image">
+                        <img src="https://raw.githubusercontent.com/abdullahbinfahad/writings/main/assets/uploads/abdullahbinfahad.jpg" alt="Abdullah Bin Fahad">
+                    </div>
+                    <div class="name">Abdullah Bin Fahad</div>
+                    <div class="title">Automation Engineering Student</div>
+                </div>
+                <div class="sidebar-section">
+                    <h3><i class="fas fa-envelope"></i> Contact Info</h3>
+                    <div class="contact-item"><span class="contact-label">Email:</span><span class="contact-value">abdullahbinfahad.abf@gmail.com</span></div>
+                    <div class="contact-item"><span class="contact-label">GitHub:</span><span class="contact-value">github.com/abdullahbinfahad</span></div>
+                    <div class="contact-item"><span class="contact-label">Phone:</span><span class="contact-value">+86 18105180247</span></div>
+                    <div class="contact-item"><span class="contact-label">Location:</span><span class="contact-value">Nanjing, China</span></div>
+                </div>
+                <div class="sidebar-section">
+                    <h3><i class="fas fa-user"></i> Personal Info</h3>
+                    <div class="personal-item"><span class="personal-label">DOB:</span><span class="personal-value">August 14, 2006</span></div>
+                    <div class="personal-item"><span class="personal-label">Nationality:</span><span class="personal-value">Bangladeshi</span></div>
+                    <div class="personal-item"><span class="personal-label">Passport:</span><span class="personal-value">A16306012</span></div>
+                    <div class="personal-item"><span class="personal-label">Gender:</span><span class="personal-value">Male</span></div>
+                    <div class="personal-item"><span class="personal-label">Religion:</span><span class="personal-value">Islam</span></div>
+                    <div class="personal-item"><span class="personal-label">Blood Type:</span><span class="personal-value">A+</span></div>
+                </div>
+                <div class="sidebar-section">
+                    <h3><i class="fas fa-laptop-code"></i> Technical Skills</h3>
+                    <div class="skill-item"><div class="skill-name">Automation & Control <span>82%</span></div><div class="skill-level"><div class="skill-progress" style="width: 82%;"></div></div></div>
+                    <div class="skill-item"><div class="skill-name">Python Programming <span>78%</span></div><div class="skill-level"><div class="skill-progress" style="width: 78%;"></div></div></div>
+                    <div class="skill-item"><div class="skill-name">HTML / CSS <span>80%</span></div><div class="skill-level"><div class="skill-progress" style="width: 80%;"></div></div></div>
+                    <div class="skill-item"><div class="skill-name">C Programming <span>72%</span></div><div class="skill-level"><div class="skill-progress" style="width: 72%;"></div></div></div>
+                    <div class="skill-item"><div class="skill-name">Digital Marketing <span>88%</span></div><div class="skill-level"><div class="skill-progress" style="width: 88%;"></div></div></div>
+                    <div class="skill-item"><div class="skill-name">Video / Audio Editing <span>85%</span></div><div class="skill-level"><div class="skill-progress" style="width: 85%;"></div></div></div>
+                    <div class="skill-item"><div class="skill-name">MS Office Suite <span>90%</span></div><div class="skill-level"><div class="skill-progress" style="width: 90%;"></div></div></div>
+                </div>
+                <div class="sidebar-section">
+                    <h3><i class="fas fa-language"></i> Languages</h3>
+                    <div class="language-item"><span class="language-name">Bangla</span><span class="language-level">Native</span></div>
+                    <div class="language-item"><span class="language-name">English</span><span class="language-level">Fluent</span></div>
+                    <div class="language-item"><span class="language-name">Mandarin Chinese</span><span class="language-level">Intermediate (HSK 4)</span></div>
+                    <div class="language-item"><span class="language-name">Hindi / Urdu</span><span class="language-level">Conversational</span></div>
                 </div>
             </div>
-        </header>
-        
-        <main class="container blog-content fade-in">
-            {{ content }}
-        </main>
-        
-        <footer class="blog-footer">
-            <div class="container footer-container">
-                <p>&copy; 2026 abdullahbinfahad.info</p>
+            <div class="main-content">
+                <div class="main-section">
+                    <h2><i class="fas fa-graduation-cap"></i> Education</h2>
+                    <div class="education-item"><div class="education-header"><div class="education-degree">BSc in Automation Engineering</div><div class="education-date">2025 – 2029 (Expected)</div></div><div class="education-institution">Nanjing Tech University, China</div><div class="education-result">Freshman Scholarship Awardee</div><div class="education-subjects"><strong>Core:</strong> Control Systems, Robotics, PLC, Sensors, C/C++</div></div>
+                    <div class="education-item"><div class="education-header"><div class="education-degree">Higher Secondary Certificate (Science)</div><div class="education-date">2022 – 2024</div></div><div class="education-institution">Bhola Government College, Bangladesh</div><div class="education-result">GPA: 4.58/5.00</div></div>
+                    <div class="education-item"><div class="education-header"><div class="education-degree">Secondary School Certificate (Science)</div><div class="education-date">2020 – 2022</div></div><div class="education-institution">Dhaligour Nagar Secondary School, Bangladesh</div><div class="education-result">GPA: 5.00/5.00</div></div>
+                </div>
+                <div class="main-section">
+                    <h2><i class="fas fa-trophy"></i> Key Achievements</h2>
+                    <!-- UPDATED ACHIEVEMENTS SECTION -->
+                    <div class="achievement-item"><div class="achievement-title">Writer</div><div class="achievement-desc">Authored multiple short stories and novels, creating original fictional narratives and creative works.</div></div>
+                    <div class="achievement-item"><div class="achievement-title">Speaker & Mentor</div><div class="achievement-desc">Delivered 15+ seminars on ethics and moral values, engaging over 500 participants.</div></div>
+                    <div class="achievement-item"><div class="achievement-title">Automation Project Experience</div><div class="achievement-desc">Participated in multiple automation projects and gained hands-on experience in embedded systems, automation technologies, and independent engineering projects.</div></div>
+                    <div class="achievement-item"><div class="achievement-title">Cultural Volunteer</div><div class="achievement-desc">Contributed 100+ hours to cultural exchange activities, introducing Bangladeshi heritage to more than 200 visitors.</div></div>
+                    <div class="achievement-item"><div class="achievement-title">Technology Event Organizer</div><div class="achievement-desc">Organized an IoT-based home automation demonstration at a science fair for 300+ students and faculty members.</div></div>
+                </div>
+                <div class="main-section">
+                    <h2><i class="fas fa-code-branch"></i> Featured Projects</h2>
+                    <div class="achievement-item"><div class="achievement-title">MarketLens AI</div><div class="achievement-desc">Intelligent cross‑border e‑commerce agent. Real‑time market intelligence, consumer review analysis, tariff risk simulation.</div></div>
+                    <div class="achievement-item"><div class="achievement-title">Smart Calculator</div><div class="achievement-desc">Educational device for low‑connectivity areas. AI assistant, offline mesh, 10+ languages, GPS. (Coming soon)</div></div>
+                    <div class="achievement-item"><div class="achievement-title">Other Projects</div><div class="achievement-desc">Currently developing additional interactive applications. (Under Development)</div></div>
+                </div>
+                <div class="main-section">
+                    <h2><i class="fas fa-chart-bar"></i> By the Numbers</h2>
+                    <div class="stats-container">
+                        <div class="stat-block"><div class="stat-number">15+</div><div class="stat-label">Seminars</div></div>
+                        <div class="stat-block"><div class="stat-number">6+</div><div class="stat-label">Projects</div></div>
+                        <div class="stat-block"><div class="stat-number">4+</div><div class="stat-label">Research Areas</div></div>
+                        <div class="stat-block"><div class="stat-number">500+</div><div class="stat-label">Audience</div></div>
+                        <div class="stat-block"><div class="stat-number">4</div><div class="stat-label">Languages</div></div>
+                    </div>
+                </div>
             </div>
-        </footer>
+        </div>
+        <div class="footer"><p>This resume was created by Abdullah Bin Fahad • Last updated July 2026</p></div>
     </div>
+
+    <!-- ================= CHINESE VERSION ================= -->
+    <div id="lang-zh" class="lang-wrapper">
+        <div class="cv-container">
+            <div class="decoration-element decoration-top-left">智</div>
+            <div class="decoration-element decoration-top-right">慧</div>
+            <div class="decoration-element decoration-bottom-left">成</div>
+            <div class="decoration-element decoration-bottom-right">就</div>
+            <div class="floating-element element-1">学</div>
+            <div class="floating-element element-2">业</div>
+            <div class="floating-element element-3">精</div>
+            <div class="floating-element element-4">进</div>
+
+            <div class="sidebar">
+                <div class="profile-section">
+                    <div class="profile-image">
+                        <img src="https://scontent-lga3-2.xx.fbcdn.net/v/t39.30808-6/534911390_122108144996970924_3321454930476706456_n.jpg?stp=dst-jpg_tt6&cstp=mx780x773&ctp=s780x773&_nc_cat=101&ccb=1-7&_nc_sid=a5f93a&_nc_ohc=pYmkteaalL0Q7kNvwFrYKMe&_nc_oc=AdppuU5s_SJeh8O13Pgtpp-WOJh6WF_KrQkboXUWaYK4XWm26avWFz42UoZzGXQqwyk&_nc_zt=23&_nc_ht=scontent-lga3-2.xx&_nc_gid=4MYupTX0p0_qesg2AQ1BEg&_nc_ss=7b2a8&oh=00_AQC_MA_RcpaoJDYDy1dCuayuL22T2Fvef_l7MHhqkyAiVA&oe=6A6F4051" alt="阿卜杜拉·本·法赫德">
+                    </div>
+                    <div class="name">阿卜杜拉·本·法赫德 (明远)</div>
+                    <div class="title">自动化工程系学生</div>
+                </div>
+                <div class="sidebar-section">
+                    <h3><i class="fas fa-envelope"></i> 联络信息</h3>
+                    <div class="contact-item"><span class="contact-label">电子邮件：</span><span class="contact-value">abdullahbinfahad.abf@gmail.com</span></div>
+                    <div class="contact-item"><span class="contact-label">个人网站：</span><span class="contact-value">github.com/abdullahbinfahad</span></div>
+                    <div class="contact-item"><span class="contact-label">电话：</span><span class="contact-value">+86 18105180247</span></div>
+                    <div class="contact-item"><span class="contact-label">通讯地址：</span><span class="contact-value">中国，南京</span></div>
+                </div>
+                <div class="sidebar-section">
+                    <h3><i class="fas fa-user"></i> 个人资料</h3>
+                    <div class="personal-item"><span class="personal-label">出生日期：</span><span class="personal-value">2006年8月14日</span></div>
+                    <div class="personal-item"><span class="personal-label">国籍：</span><span class="personal-value">孟加拉</span></div>
+                    <div class="personal-item"><span class="personal-label">护照号码：</span><span class="personal-value">A16306012</span></div>
+                    <div class="personal-item"><span class="personal-label">性别：</span><span class="personal-value">男性</span></div>
+                    <div class="personal-item"><span class="personal-label">宗教信仰：</span><span class="personal-value">伊斯兰教</span></div>
+                    <div class="personal-item"><span class="personal-label">血型：</span><span class="personal-value">A+</span></div>
+                </div>
+                <div class="sidebar-section">
+                    <h3><i class="fas fa-laptop-code"></i> 专业技能</h3>
+                    <div class="skill-item"><div class="skill-name">自动化与控制 <span>70%</span></div><div class="skill-level"><div class="skill-progress" style="width: 70%;"></div></div></div>
+                    <div class="skill-item"><div class="skill-name">HTML/CSS <span>80%</span></div><div class="skill-level"><div class="skill-progress" style="width: 80%;"></div></div></div>
+                    <div class="skill-item"><div class="skill-name">Python编程 <span>60%</span></div><div class="skill-level"><div class="skill-progress" style="width: 60%;"></div></div></div>
+                    <div class="skill-item"><div class="skill-name">数字营销 <span>75%</span></div><div class="skill-level"><div class="skill-progress" style="width: 75%;"></div></div></div>
+                    <div class="skill-item"><div class="skill-name">影音编辑 <span>85%</span></div><div class="skill-level"><div class="skill-progress" style="width: 85%;"></div></div></div>
+                    <div class="skill-item"><div class="skill-name">内容撰写 <span>90%</span></div><div class="skill-level"><div class="skill-progress" style="width: 90%;"></div></div></div>
+                    <div class="skill-item"><div class="skill-name">Microsoft Office <span>85%</span></div><div class="skill-level"><div class="skill-progress" style="width: 85%;"></div></div></div>
+                </div>
+                <div class="sidebar-section">
+                    <h3><i class="fas fa-language"></i> 语言能力</h3>
+                    <div class="language-item"><span class="language-name">孟加拉语</span><span class="language-level">母语</span></div>
+                    <div class="language-item"><span class="language-name">英语</span><span class="language-level">流利</span></div>
+                    <div class="language-item"><span class="language-name">普通话</span><span class="language-level">中级 (HSK 4)</span></div>
+                    <div class="language-item"><span class="language-name">印地语 / 乌尔都语</span><span class="language-level">会话</span></div>
+                </div>
+            </div>
+
+            <div class="main-content">
+                <div class="main-section">
+                    <h2><i class="fas fa-graduation-cap"></i> 教育背景</h2>
+                    <div class="education-item"><div class="education-header"><div class="education-degree">自动化工程理学学士</div><div class="education-date">2025 – 2029 (预期)</div></div><div class="education-institution">南京工业大学, 中国</div><div class="education-result">新生奖学金获得者</div><div class="education-subjects"><strong>主修科目：</strong>控制系统、机器人学、PLC、传感器、C/C++</div></div>
+                    <div class="education-item"><div class="education-header"><div class="education-degree">高等中学证书(HSC) - 理科</div><div class="education-date">2022 – 2024</div></div><div class="education-institution">Bhola Government College, 孟加拉</div><div class="education-result">平均绩点：4.58/5.00</div></div>
+                    <div class="education-item"><div class="education-header"><div class="education-degree">中学毕业证书(SSC) - 理科</div><div class="education-date">2020 – 2022</div></div><div class="education-institution">Dhaligour Nagar Secondary School, 孟加拉</div><div class="education-result">平均绩点：5.00/5.00 (满分)</div></div>
+                </div>
+                <div class="main-section">
+                    <h2><i class="fas fa-trophy"></i> 主要成就</h2>
+                    <!-- UPDATED CHINESE ACHIEVEMENTS -->
+                    <div class="achievement-item"><div class="achievement-title">作家</div><div class="achievement-desc">创作多部短篇小说和长篇小说，打造原创虚构叙事和创意作品。</div></div>
+                    <div class="achievement-item"><div class="achievement-title">演讲者与导师</div><div class="achievement-desc">举办了15场以上关于伦理与道德价值观的研讨会，参与人数超过500人。</div></div>
+                    <div class="achievement-item"><div class="achievement-title">自动化项目经验</div><div class="achievement-desc">参与多个自动化项目，在嵌入式系统、自动化技术和独立工程项目中获得丰富的实践经验。</div></div>
+                    <div class="achievement-item"><div class="achievement-title">文化志愿者</div><div class="achievement-desc">贡献100多小时的志愿服务活动，向200多名访客介绍孟加拉国文化遗产。</div></div>
+                    <div class="achievement-item"><div class="achievement-title">科技活动组织者</div><div class="achievement-desc">在科技博览会上组织了基于物联网的智能家居演示，吸引了300多名师生参加。</div></div>
+                </div>
+                <div class="main-section">
+                    <h2><i class="fas fa-code-branch"></i> 重点项目</h2>
+                    <div class="achievement-item"><div class="achievement-title">MarketLens AI</div><div class="achievement-desc">智能跨境电商代理，提供实时市场情报、消费者评论分析及关税风险模拟。</div></div>
+                    <div class="achievement-item"><div class="achievement-title">智能计算器</div><div class="achievement-desc">专为低连通区域设计的教育设备，搭载AI助手、离线Mesh网络、10+种语言与GPS。 (即将推出)</div></div>
+                    <div class="achievement-item"><div class="achievement-title">其他项目</div><div class="achievement-desc">目前正在开发更多交互式应用程序和自动化工具。 (开发中)</div></div>
+                </div>
+                <div class="main-section">
+                    <h2><i class="fas fa-chart-bar"></i> 数据统计</h2>
+                    <div class="stats-container">
+                        <div class="stat-block"><div class="stat-number">15+</div><div class="stat-label">研讨会</div></div>
+                        <div class="stat-block"><div class="stat-number">6+</div><div class="stat-label">项目</div></div>
+                        <div class="stat-block"><div class="stat-number">4+</div><div class="stat-label">研究领域</div></div>
+                        <div class="stat-block"><div class="stat-number">500+</div><div class="stat-label">听众</div></div>
+                        <div class="stat-block"><div class="stat-number">4</div><div class="stat-label">语言</div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer"><p>此简历由阿卜杜拉·本·法赫德制作 • 最后更新于 2026年7月</p></div>
+    </div>
+
+    <script>
+        // JS Logic to toggle between English and Chinese
+        function toggleLanguage() {
+            const en = document.getElementById('lang-en');
+            const zh = document.getElementById('lang-zh');
+            const btnText = document.getElementById('langBtnText');
+
+            if (en.classList.contains('active')) {
+                en.classList.remove('active');
+                zh.classList.add('active');
+                btnText.innerText = "English";
+            } else {
+                zh.classList.remove('active');
+                en.classList.add('active');
+                btnText.innerText = "中文版";
+            }
+        }
+
+        // Password Protection Logic
+        function checkPassword() {
+            const pass = document.getElementById('passwordInput').value;
+            if (pass === '471859') {
+                document.getElementById('passwordOverlay').classList.add('hidden');
+                document.body.classList.add('unlocked');
+            } else {
+                alert('Incorrect password. Please try again.');
+                document.getElementById('passwordInput').value = '';
+            }
+        }
+        // Allow pressing "Enter" key to submit password
+        document.addEventListener('DOMContentLoaded', function() {
+            const passInput = document.getElementById('passwordInput');
+            passInput.addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') {
+                    checkPassword();
+                }
+            });
+            // Initialize skill bar animations
+            const progressBars = document.querySelectorAll('.skill-progress');
+            progressBars.forEach((bar, index) => {
+                bar.style.animationDelay = `${index * 0.2}s`;
+            });
+        });
+    </script>
 </body>
 </html>
