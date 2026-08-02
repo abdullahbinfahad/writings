@@ -64,7 +64,6 @@
         .upload-status { margin-top: 12px; font-size: 0.9rem; font-weight: 500; }
         .featured-checkbox-wrap { margin-top: 15px; display: flex; align-items: center; gap: 8px; }
         .featured-checkbox-wrap input[type="checkbox"] { width: 20px; height: 20px; min-height: auto; padding: 0; margin: 0; cursor: pointer; accent-color: #a82e1d; }
-        /* Featured Image Preview */
         #featured-image-preview { margin-top: 10px; display: none; max-width: 100%; max-height: 200px; border-radius: 12px; border: 1px solid #e2e8f0; padding: 4px; background: #fafafa; }
         @media (max-width: 900px) {
             .editor-page-wrapper { flex-direction: column; }
@@ -158,7 +157,7 @@
                     <label for="additional_file">Image, Video, or PDF URL</label>
                     <input type="url" id="additional_file" placeholder="https://example.com/under-article-file.pdf">
                 </div>
-                <!-- PRE-FILLED REFERENCES WITH COPYRIGHT (FIXED AS ONE LINE) -->
+                <!-- PRE-FILLED REFERENCES WITH COPYRIGHT -->
                 <div class="seo-card" style="margin-top:15px;">
                     <h3>📚 References & Links</h3>
                     <label for="references_input">References (One per line)</label>
@@ -181,7 +180,6 @@
                     <button id="uploadBtn" style="background: #10b981; color: white; border: none; padding: 12px 20px; border-radius: 10px; font-weight: 600; cursor: pointer; width: 100%; margin-top: 15px; transition:0.2s;">⬆ Upload & Insert</button>
                     <div id="uploadStatus" class="upload-status"></div>
 
-                    <!-- NEW SECTION: Select Previous Media -->
                     <div class="media-row" style="margin-top: 25px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
                         <div>
                             <label for="previousMediaSelect">📁 Select Previous Media</label>
@@ -226,7 +224,6 @@
         </div>
     </div>
     
-    <!-- CACHE-BUSTED CDN LINK FOR JS -->
     <script src="https://unpkg.com/easymde/dist/easymde.min.js?v=2.0.0"></script>
     
     <script>
@@ -274,7 +271,6 @@
         const postList = document.getElementById('post-list');
         const refreshListBtn = document.getElementById('refreshList');
         
-        // NEW ELEMENTS FOR PREVIOUS MEDIA
         const prevMediaSelect = document.getElementById('previousMediaSelect');
         const refreshPrevMediaBtn = document.getElementById('refreshPrevMediaBtn');
         const prevMediaPreview = document.getElementById('prevMediaPreview');
@@ -292,16 +288,13 @@
         const savedToken = localStorage.getItem('github_blog_token');
         if(savedToken) tokenInput.value = savedToken;
 
-        // --- BULLETPROOF SLUG GENERATOR (supports Bangla & any language) ---
         function generateSlug(text) {
             let slug = text
                 .toLowerCase()
-                // Keep only a-z, 0-9, spaces, and dashes (strip everything else)
                 .replace(/[^a-z0-9\s-]/g, '')
                 .trim()
                 .replace(/\s+/g, '-')
                 .replace(/-+/g, '-');
-            // If slug is empty (e.g., pure Bangla), use a timestamp-based fallback
             if (!slug) {
                 const now = new Date();
                 const dateStr = now.toISOString().split('T')[0].replace(/-/g, '');
@@ -319,7 +312,6 @@
             isAutoSlugging = false;
         });
 
-        // --- Live Featured Image Preview ---
         seoImageInput.addEventListener('input', function() {
             const url = this.value.trim();
             if (url && (url.match(/\.(jpg|jpeg|png|gif|webp|svg)$/i) || url.startsWith('http'))) {
@@ -388,7 +380,6 @@
             return token;
         }
 
-        // --- LOAD PREVIOUS MEDIA LIST ---
         async function loadPreviousMedia() {
             const token = saveToken();
             if(!token) { return; }
@@ -418,7 +409,6 @@
         }
         refreshPrevMediaBtn.addEventListener('click', loadPreviousMedia);
 
-        // --- PREVIEW PREVIOUS MEDIA ON SELECT ---
         prevMediaSelect.addEventListener('change', function() {
             const url = this.value;
             prevMediaPreview.style.display = 'none';
@@ -440,7 +430,6 @@
             prevMediaPreview.style.display = 'block';
         });
 
-        // --- INSERT PREVIOUS MEDIA ---
         insertPrevMediaBtn.addEventListener('click', function() {
             const url = prevMediaSelect.value;
             if(!url) { alert('Please select a file first.'); return; }
@@ -470,8 +459,6 @@
             setPrevFeaturedCheck.checked = false;
         });
 
-
-        // --- UPLOAD MEDIA ---
         uploadBtn.addEventListener('click', async () => {
             const token = saveToken();
             if(!token) { uploadStatus.innerText = 'Error: Token required.'; uploadStatus.className = 'error'; return; }
@@ -508,7 +495,6 @@
                             insertText = `<figure class="media-figure"><div class="media-wrapper"><img src="${publicUrl}" alt="${altText}" title="${altText}"></div>${captionHTML}</figure>`;
                             if(isFeatured) {
                                 seoImageInput.value = publicUrl;
-                                // Trigger preview update
                                 featuredImagePreview.src = publicUrl;
                                 featuredImagePreview.style.display = 'block';
                                 uploadStatus.innerHTML = `✅ Set as Featured Image! <a href="${publicUrl}" target="_blank">View File</a> (Will appear under the title)`;
@@ -526,7 +512,6 @@
                                 easyMDE.codemirror.replaceRange(insertText + '\n', cursorPos);
                             }
                         } else if (mime === 'application/pdf' || ext === 'pdf') {
-                            // FIX: EMBED PDF INSTEAD OF DOWNLOAD LINK
                             insertText = `<iframe src="${publicUrl}" width="100%" height="500px" style="border:none; border-radius:12px;"></iframe>`;
                             if(isFeatured) {
                                 seoImageInput.value = publicUrl;
@@ -542,7 +527,6 @@
                         }
                         fileInput.value = ''; uploadFileName.value = ''; mediaAlt.value = ''; mediaCaption.value = '';
                         setAsFeaturedCheck.checked = false;
-                        // Refresh previous media list automatically after upload
                         loadPreviousMedia();
                     } else { const err = await res.json(); uploadStatus.innerText = `❌ GitHub Error: ${err.message}`; uploadStatus.className = 'error'; }
                 } catch(error) { uploadStatus.innerText = `❌ Connection Error: ${error.message}`; uploadStatus.className = 'error'; }
@@ -628,7 +612,6 @@
                 seriesNameInput.value = getMeta('series').trim();
                 chapterNameInput.value = getMeta('chapter_name').trim();
                 
-                // --- FIX: Strip quotes from Badge and Image inputs ---
                 badgeInput.value = getMeta('badge').replace(/^["']|["']$/g, '').trim();
                 seoImageInput.value = getMeta('image').replace(/^["']|["']$/g, '').trim();
                 
@@ -641,7 +624,6 @@
                 const loadedTags = getMeta('keywords').trim();
                 if(loadedTags) { tags = loadedTags.split(',').map(t => t.trim().toLowerCase()); updateTagUI(); } else { tags = []; updateTagUI(); }
                 
-                // Update preview if image exists
                 if (seoImageInput.value) {
                     featuredImagePreview.src = seoImageInput.value;
                     featuredImagePreview.style.display = 'block';
@@ -668,7 +650,8 @@
             const badge = badgeInput.value.trim();
             const author = authorInput.value.trim();
             const pinned = pinnedInput.checked;
-            const content = easyMDE.value().trimStart(); // CRITICAL FIX: Prevents YAML "line 1 column 1" crash
+            // BULLETPROOF FIX: Strip accidental leading "---" or whitespace from content
+            const content = easyMDE.value().trimStart().replace(/^---\s*\n?/, '');
             const description = seoDescInput.value.trim();
             const keywords = tags.join(', ');
             const image = seoImageInput.value.trim();
@@ -749,7 +732,6 @@
                     seoDescInput.value = ''; descCount.textContent = '0'; tags = []; updateTagUI();
                     seoImageInput.value = ''; featuredImagePreview.style.display = 'none';
                     additionalFileInput.value = ''; 
-                    // FIXED: Removed the \n that was causing the reference line break
                     referencesInput.value = "© 2026 Abdullah Bin Fahad. All ideas, analyses, information, and creative contents are the author's original intellectual property. All rights reserved. Unauthorized reproduction or distribution is prohibited.";
                     mediaAlt.value = ''; mediaCaption.value = ''; uploadFileName.value = ''; fileInput.value = '';
                     uploadStatus.innerHTML = '';
@@ -791,7 +773,6 @@
         });
 
         setTimeout(loadPostList, 500);
-        // Load previous media list on initial load if token exists
         if(savedToken) { setTimeout(loadPreviousMedia, 1000); }
     </script>
 </body>
