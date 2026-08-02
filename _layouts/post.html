@@ -19,9 +19,71 @@ layout: default
     }
     .media-figure figcaption {
         font-family: var(--font-sans); font-size: 0.9rem; color: #6b7280;
-        text-align: center; padding-top: 0; /* REMOVED THE GAP */
+        text-align: center; padding-top: 0;
         margin-top: 0;
         line-height: 1.4; font-style: italic; max-width: 100%;
+    }
+
+    /* Translate button under title, right-aligned */
+    .post-translate {
+        text-align: right;
+        margin: 0 0 1rem 0;
+    }
+    .post-translate button {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: #a82e1d;
+        color: white;
+        padding: 8px 18px;
+        border: none;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        font-family: inherit;
+        cursor: pointer;
+    }
+    .post-translate button:hover {
+        background: #8b2417;
+    }
+
+    /* Full-screen translation overlay */
+    .translate-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255,255,255,0.98);
+        z-index: 10000;
+        display: none;
+        flex-direction: column;
+    }
+    .translate-overlay.active {
+        display: flex;
+    }
+    .translate-overlay iframe {
+        flex: 1;
+        width: 100%;
+        border: none;
+    }
+    .translate-overlay .close-btn {
+        position: absolute;
+        top: 15px;
+        right: 20px;
+        background: #a82e1d;
+        color: white;
+        border: none;
+        padding: 10px 16px;
+        border-radius: 30px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        z-index: 10001;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    .translate-overlay .close-btn:hover {
+        background: #8b2417;
     }
 </style>
 
@@ -33,6 +95,11 @@ layout: default
             {{ page.chapter_name }}
         </div>
         {% endif %}
+
+        <!-- 🌐 TRANSLATE BUTTON – same page overlay, China-friendly -->
+        <div class="post-translate">
+            <button id="openTranslateBtn">🌐 Translate</button>
+        </div>
 
         <figure class="media-figure" style="margin: 0 0 1.5rem 0; width: 100%; max-width: 760px; margin-left: auto; margin-right: auto;">
             {% if page.image or page.attachment %}
@@ -99,7 +166,6 @@ layout: default
                 {% for post in related_posts limit:4 %}
                     {% assign part_index = 0 %}
                     {% if post.series %}
-                        <!-- FIXED LOGIC: Filter and sort the series posts, then find the index -->
                         {% assign series_posts = site.posts | where_exp:"p", "p.series == post.series" | sort: "date" %}
                         {% for sp in series_posts %}
                             {% if sp.url == post.url %}
@@ -139,6 +205,13 @@ layout: default
     </aside>
 </div>
 
+<!-- TRANSLATION OVERLAY (stays on same page) -->
+<div id="translateOverlay" class="translate-overlay">
+    <button class="close-btn" id="closeTranslateOverlay">✕ Close Translation</button>
+    <iframe id="translateFrame" src="" title="Translated page"></iframe>
+</div>
+
+<!-- UPLOAD MODAL -->
 <div id="uploadModal" class="modal-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:9999; justify-content:center; align-items:center; backdrop-filter:blur(4px);">
     <div class="modal-box" style="background:white; max-width:500px; width:90%; padding:35px; border-radius:20px; position:relative; box-shadow:0 25px 50px rgba(0,0,0,0.3);">
         <span id="closeModal" style="position:absolute; top:15px; right:20px; font-size:28px; cursor:pointer; color:#64748b;">&times;</span>
@@ -152,7 +225,7 @@ layout: default
     </div>
 </div>
 
-<!-- INVISIBLE VIEW COUNTER (Shows data in editor.html but NOT publicly) -->
+<!-- INVISIBLE VIEW COUNTER -->
 <script>
     const urlPath = window.location.pathname.replace(/^\/|\/$/g, '');
     if(urlPath) {
@@ -170,11 +243,37 @@ layout: default
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const openBtn = document.getElementById('openUploadForm'); const modal = document.getElementById('uploadModal'); const closeBtn = document.getElementById('closeModal');
+    // Upload modal
+    const openBtn = document.getElementById('openUploadForm');
+    const modal = document.getElementById('uploadModal');
+    const closeBtn = document.getElementById('closeModal');
     if(openBtn && modal) {
         openBtn.addEventListener('click', function() { modal.style.display = 'flex'; });
         if(closeBtn) closeBtn.addEventListener('click', function() { modal.style.display = 'none'; });
         window.addEventListener('click', function(e) { if(e.target === modal) modal.style.display = 'none'; });
+    }
+
+    // Translate overlay (same page)
+    const translateBtn = document.getElementById('openTranslateBtn');
+    const overlay = document.getElementById('translateOverlay');
+    const closeOverlay = document.getElementById('closeTranslateOverlay');
+    const translateFrame = document.getElementById('translateFrame');
+
+    if(translateBtn && overlay && closeOverlay && translateFrame) {
+        translateBtn.addEventListener('click', function() {
+            // Build Bing Translator URL for the current page (works in China)
+            const currentUrl = window.location.href;
+            const bingUrl = `https://www.bing.com/translator?from=auto&to=auto&a=${encodeURIComponent(currentUrl)}`;
+            translateFrame.src = bingUrl;
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden'; // prevent background scrolling
+        });
+
+        closeOverlay.addEventListener('click', function() {
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+            translateFrame.src = ''; // stop loading
+        });
     }
 });
 </script>
