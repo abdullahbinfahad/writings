@@ -2,187 +2,197 @@
 layout: default
 ---
 <style>
-    /* Makes Related Posts cards wider & horizontal */
+    /* Your existing styles (unchanged) */
     .related-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.8rem; width: 100%; }
     .post-references ul { list-style: none !important; padding-left: 0 !important; margin: 0; }
     .post-references ul li { font-family: var(--font-sans); font-size: 0.8rem; color: #4b5563; line-height: 1.6; padding: 0.2rem 0; }
     .post-references h4 { font-size: 0.9rem; font-family: var(--font-sans); color: #1a1a1a; margin-bottom: 0.4rem; }
-    
-    .featured-image-wrapper {
-        position: relative; width: 100% !important; aspect-ratio: 16 / 9 !important;
-        border-radius: 16px; overflow: hidden; border: 1px solid #e5e7eb; margin: 0;
-        background: #f3f4f6; display: block !important; box-sizing: border-box;
-    }
-    .featured-image-wrapper img, .featured-image-wrapper video {
-        width: 100% !important; height: 100% !important; object-fit: cover !important;
-        display: block; vertical-align: top; box-sizing: border-box;
-    }
-    .media-figure figcaption {
-        font-family: var(--font-sans); font-size: 0.9rem; color: #6b7280;
-        text-align: center; padding-top: 0;
-        margin-top: 0;
-        line-height: 1.4; font-style: italic; max-width: 100%;
-    }
+    .featured-image-wrapper { position: relative; width: 100% !important; aspect-ratio: 16 / 9 !important; border-radius: 16px; overflow: hidden; border: 1px solid #e5e7eb; margin: 0; background: #f3f4f6; display: block !important; box-sizing: border-box; }
+    .featured-image-wrapper img, .featured-image-wrapper video { width: 100% !important; height: 100% !important; object-fit: cover !important; display: block; vertical-align: top; box-sizing: border-box; }
+    .media-figure figcaption { font-family: var(--font-sans); font-size: 0.9rem; color: #6b7280; text-align: center; padding-top: 0; margin-top: 0; line-height: 1.4; font-style: italic; max-width: 100%; }
 
-    /* Translate button under title, right-aligned */
-    .post-translate {
-        text-align: right;
-        margin: 0 0 1rem 0;
-    }
-    .post-translate button {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        background: #a82e1d;
-        color: white;
-        padding: 8px 18px;
-        border: none;
-        border-radius: 20px;
-        font-size: 0.9rem;
-        font-weight: 600;
-        font-family: inherit;
-        cursor: pointer;
-    }
-    .post-translate button:hover {
-        background: #8b2417;
-    }
-
-    /* Full-screen translation overlay */
-    .translate-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(255,255,255,0.98);
-        z-index: 10000;
-        display: none;
-        flex-direction: column;
-    }
-    .translate-overlay.active {
-        display: flex;
-    }
-    .translate-overlay iframe {
-        flex: 1;
-        width: 100%;
-        border: none;
-    }
-    .translate-overlay .close-btn {
+    /* =========================================
+       Glass‑morphism translate button & dropdown
+    ========================================= */
+    .translate-trigger {
         position: absolute;
-        top: 15px;
-        right: 20px;
-        background: #a82e1d;
-        color: white;
-        border: none;
-        padding: 10px 16px;
-        border-radius: 30px;
-        font-size: 0.9rem;
-        font-weight: 600;
+        top: 0.5rem;
+        right: 0.5rem;
+        z-index: 100;
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.2);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border: 1px solid rgba(255,255,255,0.4);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         cursor: pointer;
-        z-index: 10001;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        color: #333;
+        transition: all 0.2s;
     }
-    .translate-overlay .close-btn:hover {
-        background: #8b2417;
+    .translate-trigger:hover {
+        background: rgba(255,255,255,0.35);
+        border-color: rgba(255,255,255,0.6);
+    }
+
+    /* Language dropdown (hidden by default) */
+    .lang-dropdown {
+        position: absolute;
+        top: calc(0.5rem + 34px + 8px);
+        right: 0.5rem;
+        background: rgba(255,255,255,0.7);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255,255,255,0.5);
+        border-radius: 12px;
+        padding: 8px 0;
+        min-width: 160px;
+        display: none;
+        z-index: 101;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+    .lang-dropdown.show {
+        display: block;
+    }
+    .lang-dropdown button {
+        display: block;
+        width: 100%;
+        background: none;
+        border: none;
+        padding: 8px 16px;
+        text-align: left;
+        font-family: var(--font-sans);
+        font-size: 0.85rem;
+        color: #1a1a1a;
+        cursor: pointer;
+        transition: background 0.15s;
+    }
+    .lang-dropdown button:hover {
+        background: rgba(168,46,29,0.1);
+    }
+    .lang-dropdown button:first-child {
+        font-weight: 600;
+        color: #a82e1d;
     }
 </style>
 
 <div class="post-layout">
-    <article class="post-article fade-in">
-        <h1 class="premium-headline">{{ page.title }}</h1>
+    <article class="post-article fade-in" style="position: relative;">
+        <h1 class="premium-headline" id="post-title">{{ page.title }}</h1>
         {% if page.chapter_name %}
-        <div class="chapter-subtitle" style="font-family: var(--font-sans); font-size: 1.2rem; color: #6b7280; margin-bottom: 1.5rem; border-left: 4px solid #a82e1d; padding-left: 1rem; padding-top: 0.25rem; padding-bottom: 0.25rem; background: #f9fafb;">
+        <div class="chapter-subtitle" id="chapter-subtitle" style="font-family: var(--font-sans); font-size: 1.2rem; color: #6b7280; margin-bottom: 1.5rem; border-left: 4px solid #a82e1d; padding-left: 1rem; padding-top: 0.25rem; padding-bottom: 0.25rem; background: #f9fafb;">
             {{ page.chapter_name }}
         </div>
         {% endif %}
 
-        <!-- 🌐 TRANSLATE BUTTON – same page overlay, China-friendly -->
-        <div class="post-translate">
-            <button id="openTranslateBtn">🌐 Translate</button>
+        <!-- 🌐 Tiny glass translate button (top‑right of article) -->
+        <div class="translate-trigger" id="translateBtn" title="Translate">
+            🌐
+        </div>
+        <div class="lang-dropdown" id="langDropdown">
+            <button data-lang="original">↩ Original (English)</button>
+            <button data-lang="Simplified Chinese">中文 (简体)</button>
+            <button data-lang="Traditional Chinese">中文 (繁體)</button>
+            <button data-lang="Arabic">العربية</button>
+            <button data-lang="French">Français</button>
+            <button data-lang="Spanish">Español</button>
+            <button data-lang="German">Deutsch</button>
+            <button data-lang="Japanese">日本語</button>
+            <button data-lang="Korean">한국어</button>
+            <button data-lang="Russian">Русский</button>
+            <!-- Add more languages as needed -->
         </div>
 
-        <figure class="media-figure" style="margin: 0 0 1.5rem 0; width: 100%; max-width: 760px; margin-left: auto; margin-right: auto;">
-            {% if page.image or page.attachment %}
-            <div class="featured-image-wrapper">
-                {% if page.image %}<img src="{{ page.image | relative_url }}" alt="{{ page.title }}" loading="lazy">
-                {% elsif page.attachment %}
-                    {% assign ext = page.attachment | split: '.' | last | downcase %}
-                    {% if ext == 'png' or ext == 'jpg' or ext == 'jpeg' or ext == 'gif' or ext == 'webp' or ext == 'svg' %}
-                        <img src="{{ page.attachment | relative_url }}" alt="{{ page.title }}" loading="lazy">
-                    {% elsif ext == 'mp4' or ext == 'webm' or ext == 'ogv' %}
-                        <video src="{{ page.attachment | relative_url }}" controls loading="lazy"></video>
+        <div id="original-content">
+            <figure class="media-figure" style="margin: 0 0 1.5rem 0; width: 100%; max-width: 760px; margin-left: auto; margin-right: auto;">
+                {% if page.image or page.attachment %}
+                <div class="featured-image-wrapper">
+                    {% if page.image %}<img src="{{ page.image | relative_url }}" alt="{{ page.title }}" loading="lazy">
+                    {% elsif page.attachment %}
+                        {% assign ext = page.attachment | split: '.' | last | downcase %}
+                        {% if ext == 'png' or ext == 'jpg' or ext == 'jpeg' or ext == 'gif' or ext == 'webp' or ext == 'svg' %}
+                            <img src="{{ page.attachment | relative_url }}" alt="{{ page.title }}" loading="lazy">
+                        {% elsif ext == 'mp4' or ext == 'webm' or ext == 'ogv' %}
+                            <video src="{{ page.attachment | relative_url }}" controls loading="lazy"></video>
+                        {% endif %}
                     {% endif %}
+                </div>
+                {% if page.caption or page.image_caption %}
+                <figcaption id="figcaption">{{ page.caption | default: page.image_caption }}</figcaption>
                 {% endif %}
+                {% endif %}
+            </figure>
+
+            {% if page.attachment %}
+                {% assign ext = page.attachment | split: '.' | last | downcase %}
+                {% if ext == 'pdf' %}<div class="attachment-viewer"><iframe src="{{ page.attachment }}" title="PDF Reader"></iframe></div>{% endif %}
+            {% endif %}
+            {% if page.location %}<div class="post-location"><i class="fas fa-map-marker-alt"></i> {{ page.location }}</div>{% endif %}
+            
+            <div class="post-meta" style="font-size: 0.85rem; color: #6b7280; font-family: var(--font-sans); border-bottom: 1px solid #e5e7eb; padding-bottom: 1.2rem; margin-bottom: 2.5rem;">
+                <span class="post-date"><i class="far fa-calendar-alt"></i> {{ page.date | date: "%B %d, %Y" }}</span>
+                {% if page.author %}<span class="post-author"><i class="fas fa-user"></i> {{ page.author }}</span>{% endif %}
+                {% if page.categories.size > 0 %}<span class="post-cats"><i class="fas fa-folder-open"></i> {{ page.categories | join: ", " }}</span>{% endif %}
             </div>
-            {% if page.caption or page.image_caption %}
-            <figcaption>{{ page.caption | default: page.image_caption }}</figcaption>
+
+            <div class="premium-body-wrapper translatable-content" id="post-body">
+                <div class="post-body justified-text">{{ content }}</div>
+            </div>
+
+            {% if page.references %}
+            <div class="post-references translatable-content" id="references"><h4><i class="fas fa-bookmark"></i> References & Links</h4><ul>{% for ref in page.references %}<li>{{ ref }}</li>{% endfor %}</ul></div>
             {% endif %}
-            {% endif %}
-        </figure>
 
-        {% if page.attachment %}
-            {% assign ext = page.attachment | split: '.' | last | downcase %}
-            {% if ext == 'pdf' %}<div class="attachment-viewer"><iframe src="{{ page.attachment }}" title="PDF Reader"></iframe></div>{% endif %}
-        {% endif %}
-        {% if page.location %}<div class="post-location"><i class="fas fa-map-marker-alt"></i> {{ page.location }}</div>{% endif %}
-        
-        <div class="post-meta" style="font-size: 0.85rem; color: #6b7280; font-family: var(--font-sans); border-bottom: 1px solid #e5e7eb; padding-bottom: 1.2rem; margin-bottom: 2.5rem;">
-            <span class="post-date"><i class="far fa-calendar-alt"></i> {{ page.date | date: "%B %d, %Y" }}</span>
-            {% if page.author %}<span class="post-author"><i class="fas fa-user"></i> {{ page.author }}</span>{% endif %}
-            {% if page.categories.size > 0 %}<span class="post-cats"><i class="fas fa-folder-open"></i> {{ page.categories | join: ", " }}</span>{% endif %}
-        </div>
-
-        <div class="premium-body-wrapper"><div class="post-body justified-text">{{ content }}</div></div>
-
-        {% if page.references %}
-        <div class="post-references"><h4><i class="fas fa-bookmark"></i> References & Links</h4><ul>{% for ref in page.references %}<li>{{ ref }}</li>{% endfor %}</ul></div>
-        {% endif %}
-
-        {% if page.series %}
-        <div class="series-navigation">
-            <h3><i class="fas fa-layer-group"></i> {{ page.series }} Series</h3>
-            <div class="series-links">
-                {% assign series_posts = site.posts | where_exp:"post", "post.series == page.series" | sort: "date" %}
-                {% assign prev_post = nil %}{% assign next_post = nil %}{% assign found_self = false %}{% assign total_parts = series_posts.size %}{% assign current_part = 0 %}
-                {% for post in series_posts %}
-                    {% if found_self %}{% assign next_post = post %}{% break %}{% endif %}
-                    {% if post.url == page.url %}{% assign found_self = true %}{% assign current_part = forloop.index0 | plus: 1 %}{% else %}{% assign prev_post = post %}{% endif %}
-                {% endfor %}
-                <div class="prev-next-wrapper">
-                    {% if prev_post %}<a href="{{ prev_post.url }}" class="series-btn prev-btn"><i class="fas fa-arrow-left"></i> Previous Part</a>{% else %}<span class="series-btn disabled">Start of Series</span>{% endif %}
-                    <span class="part-indicator">Part {{ current_part }} of {{ total_parts }}</span>
-                    {% if next_post %}<a href="{{ next_post.url }}" class="series-btn next-btn">Next Part <i class="fas fa-arrow-right"></i></a>{% else %}<span class="series-btn disabled">End of Series</span>{% endif %}
+            {% if page.series %}
+            <div class="series-navigation">
+                <h3><i class="fas fa-layer-group"></i> {{ page.series }} Series</h3>
+                <div class="series-links">
+                    {% assign series_posts = site.posts | where_exp:"post", "post.series == page.series" | sort: "date" %}
+                    {% assign prev_post = nil %}{% assign next_post = nil %}{% assign found_self = false %}{% assign total_parts = series_posts.size %}{% assign current_part = 0 %}
+                    {% for post in series_posts %}
+                        {% if found_self %}{% assign next_post = post %}{% break %}{% endif %}
+                        {% if post.url == page.url %}{% assign found_self = true %}{% assign current_part = forloop.index0 | plus: 1 %}{% else %}{% assign prev_post = post %}{% endif %}
+                    {% endfor %}
+                    <div class="prev-next-wrapper">
+                        {% if prev_post %}<a href="{{ prev_post.url }}" class="series-btn prev-btn"><i class="fas fa-arrow-left"></i> Previous Part</a>{% else %}<span class="series-btn disabled">Start of Series</span>{% endif %}
+                        <span class="part-indicator">Part {{ current_part }} of {{ total_parts }}</span>
+                        {% if next_post %}<a href="{{ next_post.url }}" class="series-btn next-btn">Next Part <i class="fas fa-arrow-right"></i></a>{% else %}<span class="series-btn disabled">End of Series</span>{% endif %}
+                    </div>
                 </div>
             </div>
-        </div>
-        {% endif %}
+            {% endif %}
 
-        <!-- RELATED POSTS WITH FIXED PART NUMBERS -->
-        <div class="related-posts-section">
-            <h3><i class="fas fa-bolt"></i> You might also like...</h3>
-            <div class="related-grid">
-                {% assign related_posts = site.categories[page.categories.first] | where_exp:"post", "post.url != page.url" %}
-                {% if related_posts.size == 0 %}{% assign related_posts = site.posts | where_exp:"post", "post.url != page.url" | limit: 4 %}{% endif %}
-                {% for post in related_posts limit:4 %}
-                    {% assign part_index = 0 %}
-                    {% if post.series %}
-                        {% assign series_posts = site.posts | where_exp:"p", "p.series == post.series" | sort: "date" %}
-                        {% for sp in series_posts %}
-                            {% if sp.url == post.url %}
-                                {% assign part_index = forloop.index0 %}
-                                {% break %}
-                            {% endif %}
-                        {% endfor %}
-                    {% endif %}
-                <a href="{{ post.url }}" class="related-card">
-                    <h4>{{ post.title }}{% if post.series %} (Part {{ part_index | plus: 1 }}){% endif %}</h4>
-                    <span class="related-date"><i class="far fa-calendar-alt"></i> {{ post.date | date: "%b %d, %Y" }}</span>
-                </a>
-                {% endfor %}
+            <div class="related-posts-section">
+                <h3><i class="fas fa-bolt"></i> You might also like...</h3>
+                <div class="related-grid">
+                    {% assign related_posts = site.categories[page.categories.first] | where_exp:"post", "post.url != page.url" %}
+                    {% if related_posts.size == 0 %}{% assign related_posts = site.posts | where_exp:"post", "post.url != page.url" | limit: 4 %}{% endif %}
+                    {% for post in related_posts limit:4 %}
+                        {% assign part_index = 0 %}
+                        {% if post.series %}
+                            {% assign series_posts = site.posts | where_exp:"p", "p.series == post.series" | sort: "date" %}
+                            {% for sp in series_posts %}
+                                {% if sp.url == post.url %}
+                                    {% assign part_index = forloop.index0 %}
+                                    {% break %}
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                    <a href="{{ post.url }}" class="related-card">
+                        <h4>{{ post.title }}{% if post.series %} (Part {{ part_index | plus: 1 }}){% endif %}</h4>
+                        <span class="related-date"><i class="far fa-calendar-alt"></i> {{ post.date | date: "%b %d, %Y" }}</span>
+                    </a>
+                    {% endfor %}
+                </div>
             </div>
-        </div>
 
-        <div class="post-footer-nav"><a href="{{ site.url }}">&larr; Back to Home</a></div>
+            <div class="post-footer-nav"><a href="{{ site.url }}">&larr; Back to Home</a></div>
+        </div>
     </article>
 
     <aside class="post-sidebar fade-in">
@@ -205,13 +215,7 @@ layout: default
     </aside>
 </div>
 
-<!-- TRANSLATION OVERLAY (stays on same page) -->
-<div id="translateOverlay" class="translate-overlay">
-    <button class="close-btn" id="closeTranslateOverlay">✕ Close Translation</button>
-    <iframe id="translateFrame" src="" title="Translated page"></iframe>
-</div>
-
-<!-- UPLOAD MODAL -->
+<!-- Upload modal -->
 <div id="uploadModal" class="modal-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:9999; justify-content:center; align-items:center; backdrop-filter:blur(4px);">
     <div class="modal-box" style="background:white; max-width:500px; width:90%; padding:35px; border-radius:20px; position:relative; box-shadow:0 25px 50px rgba(0,0,0,0.3);">
         <span id="closeModal" style="position:absolute; top:15px; right:20px; font-size:28px; cursor:pointer; color:#64748b;">&times;</span>
@@ -225,57 +229,129 @@ layout: default
     </div>
 </div>
 
-<!-- INVISIBLE VIEW COUNTER -->
+<!-- View counter -->
 <script>
     const urlPath = window.location.pathname.replace(/^\/|\/$/g, '');
     if(urlPath) {
         fetch(`https://api.countapi.xyz/hit/abdullahbinfahad_writings/${urlPath}`)
-            .then(response => {
-                if(response.ok) {
-                    console.log(`✅ View tracked successfully for: ${urlPath}`);
-                } else {
-                    console.warn(`⚠️ CountAPI returned ${response.status} for ${urlPath}`);
-                }
-            })
-            .catch(e => console.warn('🔴 CountAPI unavailable (Likely blocked by GFW). Views will not be counted.'));
+            .then(response => { if(response.ok) console.log(`✅ View tracked: ${urlPath}`); })
+            .catch(e => console.warn('🔴 CountAPI unavailable.'));
     }
 </script>
 
+<!-- Upload modal script -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Upload modal
     const openBtn = document.getElementById('openUploadForm');
     const modal = document.getElementById('uploadModal');
     const closeBtn = document.getElementById('closeModal');
     if(openBtn && modal) {
-        openBtn.addEventListener('click', function() { modal.style.display = 'flex'; });
-        if(closeBtn) closeBtn.addEventListener('click', function() { modal.style.display = 'none'; });
-        window.addEventListener('click', function(e) { if(e.target === modal) modal.style.display = 'none'; });
-    }
-
-    // Translate overlay (same page)
-    const translateBtn = document.getElementById('openTranslateBtn');
-    const overlay = document.getElementById('translateOverlay');
-    const closeOverlay = document.getElementById('closeTranslateOverlay');
-    const translateFrame = document.getElementById('translateFrame');
-
-    if(translateBtn && overlay && closeOverlay && translateFrame) {
-        translateBtn.addEventListener('click', function() {
-            // Build Bing Translator URL for the current page (works in China)
-            const currentUrl = window.location.href;
-            const bingUrl = `https://www.bing.com/translator?from=auto&to=auto&a=${encodeURIComponent(currentUrl)}`;
-            translateFrame.src = bingUrl;
-            overlay.classList.add('active');
-            document.body.style.overflow = 'hidden'; // prevent background scrolling
-        });
-
-        closeOverlay.addEventListener('click', function() {
-            overlay.classList.remove('active');
-            document.body.style.overflow = '';
-            translateFrame.src = ''; // stop loading
-        });
+        openBtn.addEventListener('click', () => modal.style.display = 'flex');
+        if(closeBtn) closeBtn.addEventListener('click', () => modal.style.display = 'none');
+        window.addEventListener('click', (e) => { if(e.target === modal) modal.style.display = 'none'; });
     }
 });
+</script>
+
+<!-- =========================================
+     GEMINI TRANSLATION – IN‑PAGE (API key directly in script)
+     ⚠️ Key is exposed – use only for testing
+========================================= -->
+<script>
+(function() {
+    // 👉 YOUR GEMINI API KEY (visible to visitors – regenerate after testing)
+    const GEMINI_API_KEY = 'AQ.Ab8RN6LMrlM9az2swS-r328Wy96zHI9KQvAvi9-PdwzP_6ySEw';
+    const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
+
+    // Store original HTML of translatable elements
+    const originalHTMLs = new Map();
+
+    function getTranslatableElements() {
+        return document.querySelectorAll('#post-title, #chapter-subtitle, #figcaption, .translatable-content');
+    }
+
+    function saveOriginals() {
+        getTranslatableElements().forEach(el => {
+            originalHTMLs.set(el, el.innerHTML);
+        });
+    }
+
+    async function translateText(text, targetLang) {
+        if (!text.trim()) return text;
+        try {
+            const prompt = `Translate the following text to ${targetLang}. Only output the translation, nothing else:\n\n${text}`;
+            const response = await fetch(GEMINI_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [{ parts: [{ text: prompt }] }]
+                })
+            });
+            const data = await response.json();
+            const translated = data?.candidates?.[0]?.content?.parts?.[0]?.text || text;
+            return translated.trim();
+        } catch (e) {
+            console.warn('Translation error:', e);
+            return text;
+        }
+    }
+
+    async function translatePage(targetLang) {
+        if (targetLang === 'original') {
+            // Restore original English
+            for (let [el, origHTML] of originalHTMLs) {
+                el.innerHTML = origHTML;
+            }
+            return;
+        }
+
+        const elements = getTranslatableElements();
+        for (let el of elements) {
+            if (el.classList.contains('translatable-content')) {
+                const children = el.querySelectorAll('p, h2, h3, h4, li, blockquote');
+                for (let child of children) {
+                    if (child.textContent.trim().length > 0) {
+                        child.textContent = await translateText(child.textContent, targetLang);
+                    }
+                }
+            } else {
+                // Title, subtitle, caption
+                const text = el.textContent.trim();
+                if (text.length > 0) {
+                    el.textContent = await translateText(text, targetLang);
+                }
+            }
+        }
+    }
+
+    // Toggle dropdown
+    const trigger = document.getElementById('translateBtn');
+    const dropdown = document.getElementById('langDropdown');
+
+    trigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        dropdown.classList.toggle('show');
+    });
+
+    // Close dropdown on outside click
+    document.addEventListener('click', () => {
+        dropdown.classList.remove('show');
+    });
+
+    // Attach translation to language buttons
+    dropdown.querySelectorAll('button').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const lang = e.target.getAttribute('data-lang');
+            translatePage(lang);
+            dropdown.classList.remove('show');
+        });
+    });
+
+    // Save originals on load
+    document.addEventListener('DOMContentLoaded', () => {
+        saveOriginals();
+    });
+})();
 </script>
 </body>
 </html>
