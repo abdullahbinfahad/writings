@@ -3,9 +3,9 @@ layout: post
 title: "যে সমাজে ভাবনা বিলাসিতা, সেখানে সত্য দুর্লভ।"
 date: 2026-08-01 20:50:00 +0800
 categories: ["Thoughts", "Society", "Life"]
-author: "\"\\"ABDULLAH BIN FAHAD\\"\""
-description: "\"\\"যে সমাজে ভাবনা বিলাসিতা, সেখানে সত্য কেন দুর্লভ হয়ে ওঠে? স্বাধীন চিন্তা, সমালোচনামূলক বিশ্লেষণ এবং সত্য অনুসন্ধান নিয়ে একটি দার্শনিক প্রবন্ধ।\\"\""
-keywords: "\"\\"self improvement, critical thinking, discipline, productivity, success, growth mindset, abdullah bin fahad, life lessons, decision making, purpose, leadership, life, philosophy, self awareness\\"\""
+author: "\"\\"\\\"ABDULLAH BIN FAHAD\\\"\\"\""
+description: "\"\\"\\\"যে সমাজে ভাবনা বিলাসিতা, সেখানে সত্য কেন দুর্লভ হয়ে ওঠে? স্বাধীন চিন্তা, সমালোচনামূলক বিশ্লেষণ এবং সত্য অনুসন্ধান নিয়ে একটি দার্শনিক প্রবন্ধ।\\\"\\"\""
+keywords: "\"\\"\\\"self improvement, critical thinking, discipline, productivity, success, growth mindset, abdullah bin fahad, life lessons, decision making, purpose, leadership, life, philosophy, self awareness\\\"\\"\""
 image: "/assets/uploads/the-crisis-of-critical-thinking.webp"
 references: ["© 2026 Abdullah Bin Fahad. All ideas, analyses, information, and creative content are the author's original intellectual property. All rights reserved. Unauthorized reproduction or distribution is prohibited."]
 ---
