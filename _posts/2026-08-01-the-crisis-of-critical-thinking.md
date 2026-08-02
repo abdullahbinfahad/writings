@@ -3,11 +3,11 @@ layout: post
 title: "যে সমাজে ভাবনা বিলাসিতা, সেখানে সত্য দুর্লভ।"
 date: 2026-08-01 20:50:00 +0800
 categories: ["Thoughts", "Society", "Life"]
-author: "\"ABDULLAH BIN FAHAD\""
-description: "\"যে সমাজে ভাবনা বিলাসিতা, সেখানে সত্য কেন দুর্লভ হয়ে ওঠে? স্বাধীন চিন্তা, সমালোচনামূলক বিশ্লেষণ এবং সত্য অনুসন্ধান নিয়ে একটি দার্শনিক প্রবন্ধ।\""
-keywords: "\"self improvement, critical thinking, discipline, productivity, success, growth mindset, abdullah bin fahad, life lessons, decision making, purpose, leadership, life, philosophy, self awareness\""
+author: "\"\\"ABDULLAH BIN FAHAD\\"\""
+description: "\"\\"যে সমাজে ভাবনা বিলাসিতা, সেখানে সত্য কেন দুর্লভ হয়ে ওঠে? স্বাধীন চিন্তা, সমালোচনামূলক বিশ্লেষণ এবং সত্য অনুসন্ধান নিয়ে একটি দার্শনিক প্রবন্ধ।\\"\""
+keywords: "\"\\"self improvement, critical thinking, discipline, productivity, success, growth mindset, abdullah bin fahad, life lessons, decision making, purpose, leadership, life, philosophy, self awareness\\"\""
 image: "/assets/uploads/the-crisis-of-critical-thinking.webp"
-references: ["© 2026 Abdullah Bin Fahad. All ideas", "analyses", "information", "and creative contents are the author's original intellectual property. All rights reserved. Unauthorized reproduction or distribution is prohibited."]
+references: ["© 2026 Abdullah Bin Fahad. All ideas, analyses, information, and creative content are the author's original intellectual property. All rights reserved. Unauthorized reproduction or distribution is prohibited."]
 ---
 বর্তমান পৃথিবীর এই অবস্থায় দাঁড়িয়ে সবচেয়ে সাধারণ যে বিষয়টি লক্ষ করা যায়, তা হচ্ছে বুদ্ধিবিভ্রম। যেখানে অধিকাংশ মানুষ চিন্তাহীনতা এবং উপলব্ধিহীনতায় ভুগছে। অথচ একটি জাতির উন্নতি বা বিকাশের মূলমন্ত্র হচ্ছে সচেতনতা এবং বিচক্ষণতা।  যেখানে তারা তাদের সম্পর্কে অবগত। এমন একটি সমাজ, যেখানে মানুষ নিজের সম্পর্কে সচেতন, নিজের বিশ্বাসকে প্রশ্ন করতে পারে এবং বাস্তবতাকে বুঝতে শেখে।  
 
