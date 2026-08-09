@@ -30,15 +30,14 @@ layout: default
             
             <div class="post-card {% if post.pinned %}pinned{% endif %}" data-categories="{{ post.categories | join: ',' | downcase }}">
                 <div class="card-content">
-                    <!-- BADGE WRAPPER WITH AUTO "NEW" LOGIC -->
+                    <!-- BADGE WRAPPER WITH BULLETPROOF AUTO "NEW" LOGIC -->
                     <div class="badge-wrapper" style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 0.5rem;">
                         
-                        <!-- AUTOMATIC "NEW" BADGE LOGIC (Less than 7 days old) -->
-                        {% assign post_date = post.date | date: '%s' %}
-                        {% assign current_date = site.time | date: '%s' %}
-                        {% assign diff_seconds = current_date | minus: post_date %}
-                        {% assign diff_days = diff_seconds | divided_by: 86400 %}
-                        {% if diff_days < 7 %}
+                        <!-- FIXED: Compares seconds directly to 604800 (7 days) to prevent floor rounding -->
+                        {% assign post_epoch = post.date | date: '%s' | plus: 0 %}
+                        {% assign now_epoch = site.time | date: '%s' | plus: 0 %}
+                        {% assign diff_seconds = now_epoch | minus: post_epoch %}
+                        {% if diff_seconds < 604800 %}
                         <span class="badge-label badge-new">New</span>
                         {% endif %}
                         
