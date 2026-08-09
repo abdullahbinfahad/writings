@@ -14,7 +14,8 @@ permalink: /archive.html
             {% assign postsByMonth = year.items | group_by_exp:"post", "post.date | date: '%B'" %}
             {% for month in postsByMonth %}
             <div class="month-item">
-                <div class="month-header" data-date="{{ year.name }}-{{ month.name | date: '%m' }}">
+                <!-- ✅ FIX: Added the missing ID so the sidebar link can find it -->
+                <div class="month-header" id="{{ month.name | slugify }}" data-date="{{ year.name }}-{{ month.name | date: '%m' }}">
                     <span class="month-name">{{ month.name }} <span style="font-weight:400; color:#6b7280; font-size:0.8rem;">({{ month.items.size }} posts)</span></span>
                     <span class="arrow"><i class="fas fa-chevron-right"></i></span>
                 </div>
@@ -173,6 +174,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (window.location.hash) {
         const target = document.querySelector(window.location.hash);
         if (target) {
+            // We have to ensure the element is visible (or scrolling works even if collapsed).
             setTimeout(() => {
                 target.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }, 500);
