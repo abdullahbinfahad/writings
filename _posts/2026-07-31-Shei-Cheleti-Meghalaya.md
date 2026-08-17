@@ -5,10 +5,10 @@ date: 2026-07-31 15:09:00 +0800
 categories: ["Novel"]
 series: "সেই ছেলেটি: মেঘালয়"
 chapter_name: "The Beginning"
-author: "ABDULLAH BIN FAHAD"
+author: "\"ABDULLAH BIN FAHAD\""
 pinned: true
-description: "একটি রহস্যময় স্বপ্ন, অন্ধকার জঙ্গল, রক্তাক্ত কুঠুরি এবং মেঘালয়ের অজানা জীবন। শুরু হলো এক মনস্তাত্ত্বিক রহস্য উপন্যাসের প্রথম অধ্যায়।"
-keywords: "novel, সেই ছেলেটি মেঘালয়, shei cheleti meghalaya, self improvement, critical thinking, discipline, productivity, success, growth mindset, abdullah bin fahad, life lessons, decision making, purpose, leadership"
+description: "\"একটি রহস্যময় স্বপ্ন, অন্ধকার জঙ্গল, রক্তাক্ত কুঠুরি এবং মেঘালয়ের অজানা জীবন। শুরু হলো এক মনস্তাত্ত্বিক রহস্য উপন্যাসের প্রথম অধ্যায়।\""
+keywords: "\"novel, সেই ছেলেটি মেঘালয়, shei cheleti meghalaya, self improvement, critical thinking, discipline, productivity, success, growth mindset, abdullah bin fahad, life lessons, decision making, purpose, leadership\""
 references: ["This is an original ongoing novel written by Abdullah Bin Fahad. All characters, events, and places are part of a fictional narrative unless otherwise stated. New chapters will be published as the story progresses."]
 ---
 <figure class="media-figure"><div class="media-wrapper"><img src="/assets/uploads/Shei_Cheleti_Meghalaya.png" alt="Shei Cheleti: Meghalaya" title="Shei Cheleti: Meghalaya"></div></figure>
@@ -67,5 +67,4 @@ _আপনি কিছুটা অদ্ভুত মনে হচ্ছে।
 আমি কিছুটা না অনেকটাই অদ্ভুত। নাম মেঘালয় সবাই সংক্ষেপে মেঘ বলে ডাকে। 
 _আচ্ছা আচ্ছা, আমি রূপসী। আপনার সাথে পরিচয় হয়ে ভালো লাগলো।
 
-তারপর সে চলে যায়। ওইদিনের পরে মাঝে মাঝেই ওইখানে গিয়ে রূপসীর সাথে দেখা হতো, কথা হতো। 
-
+তারপর সে চলে যায়। ওইদিনের পরে মাঝে মাঝেই ওইখানে গিয়ে রূপসীর সাথে দেখা হতো, কথা হতো।
