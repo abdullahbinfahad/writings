@@ -182,7 +182,7 @@ permalink: /all-posts.html
                             {% endif %}
                             
                             <!-- EXACT SAME CARD STYLE AS HOME PAGE -->
-                            <div class="post-card {% if post.pinned %}pinned{% endif %}" data-categories="{{ post.categories | join: ',' | downcase }}">
+                            <div class="post-card reveal {% if post.pinned %}pinned{% endif %}" data-categories="{{ post.categories | join: ',' | downcase }}">
                                 <div class="card-content">
                                     <div class="badge-wrapper" style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 0.5rem;">
                                         {% if post.pinned %}
@@ -214,12 +214,12 @@ permalink: /all-posts.html
 
     <!-- RIGHT SIDEBAR (Exact same as Home Page) -->
     <aside class="post-sidebar">
-        <div class="sidebar-widget contact-widget">
+        <div class="sidebar-widget reveal contact-widget">
             <h3><i class="fas fa-paper-plane"></i> Upload Your Content</h3>
             <p>Got a story, guest post, or letter?</p>
             <button id="openUploadForm" class="contact-btn" style="width:100%; border:none; cursor:pointer; background:#a82e1d; color:white; padding:12px; border-radius:30px; font-weight:600;">Upload Your Content</button>
         </div>
-        <div class="sidebar-widget">
+        <div class="sidebar-widget reveal">
             <h3><i class="fas fa-archive"></i> Monthly Archive</h3>
             <ul class="archive-list-sidebar">
                 {% assign postsByMonth = site.posts | group_by_exp:"post", "post.date | date: '%B %Y'" %}
@@ -228,7 +228,7 @@ permalink: /all-posts.html
                 {% endfor %}
             </ul>
         </div>
-        <div class="sidebar-widget">
+        <div class="sidebar-widget reveal">
             <h3><i class="fas fa-tags"></i> Categories</h3>
             <div class="category-cloud">
                 {% assign categories = site.categories | sort %}
@@ -237,7 +237,7 @@ permalink: /all-posts.html
                 {% endfor %}
             </div>
         </div>
-        <div class="sidebar-widget" style="text-align: center; padding: 1.5rem;">
+        <div class="sidebar-widget reveal" style="text-align: center; padding: 1.5rem;">
             <script type='text/javascript' src='https://storage.ko-fi.com/cdn/widget/Widget_2.js'></script>
             <script type='text/javascript'>kofiwidget2.init('Support me on Ko-fi', '#c4bbb5', 'A8M4245EW9');kofiwidget2.draw();</script>
         </div>

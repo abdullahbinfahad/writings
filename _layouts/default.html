@@ -67,6 +67,8 @@
 <body>
     <div class="blog-wrapper">
         <header class="blog-header">
+        <div class="deco-blob deco-blob-a" aria-hidden="true"></div>
+        <div class="deco-blob deco-blob-b" aria-hidden="true"></div>
             <div class="container header-container">
                 <div class="header-inner">
                     <!-- UPDATED: Title now hard-refreshes to blog home -->
@@ -96,5 +98,26 @@
             </div>
         </footer>
     </div>
+    <button class="to-top" id="toTop" aria-label="Back to top">&#8593;</button>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var revealEls = document.querySelectorAll('.reveal');
+        if ('IntersectionObserver' in window) {
+            var io = new IntersectionObserver(function(entries) {
+                entries.forEach(function(entry) {
+                    if (entry.isIntersecting) { entry.target.classList.add('visible'); io.unobserve(entry.target); }
+                });
+            }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+            revealEls.forEach(function(el) { io.observe(el); });
+        } else {
+            revealEls.forEach(function(el) { el.classList.add('visible'); });
+        }
+        var btn = document.getElementById('toTop');
+        window.addEventListener('scroll', function() {
+            if (btn) btn.classList.toggle('show', window.scrollY > 400);
+        }, { passive: true });
+        if (btn) btn.addEventListener('click', function() { window.scrollTo({ top: 0, behavior: 'smooth' }); });
+    });
+    </script>
 </body>
 </html>
